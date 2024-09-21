@@ -100,9 +100,10 @@ const Signup = () => {
                   className="w-full px-3 py-2 mb-3 text-sm leading-tight text-gray-700 dark:text-white border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
                   id="image"
                   type="file"
-                  {...register("pic",{required:"Please select your image"})}
+                  accept='image/*'
+                  {...register("image",{required:"Please select your image"})}
                 />
-                 {errors.pic && <p className="text-red-900">{errors.pic.message}</p>}
+                 {errors.image && <p className="text-red-900">{errors.image.message}</p>}
               </div>
               <div className="mb-4 md:flex md:justify-between">
                 <div className="mb-4 md:mr-2 md:mb-0">

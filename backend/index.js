@@ -3,16 +3,20 @@ import cors from 'cors';
 import {config} from 'dotenv'
 import { connectDB } from './config/db.js';
 config();
+import userRoutes from './routes/user.js'
 
 
 const app = express();
 
 // Middleware
-app.use(cors())
 app.use(express.json());
+app.use(cors())
 
 // Database 
 connectDB()
+
+// api routes 
+app.use("/api/user",userRoutes)
 
 
 const PORT = process.env.PORT || 8084
