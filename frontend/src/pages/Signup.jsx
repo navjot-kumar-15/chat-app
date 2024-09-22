@@ -1,6 +1,10 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from "react-hook-form"
+import { useDispatch, useSelector } from 'react-redux'
+import { registerUser } from '../features/auth/authSlice'
+import { toast } from 'react-toastify'
+
 
 const Signup = () => {
   const {
@@ -17,14 +21,25 @@ const Signup = () => {
     password:""
   })
   const [cPassword,setCPassword] = useState("")
-  const [matched,setNotMatched] = useState(false)
+  const dispatch =useDispatch();
+  const {message} = useSelector(state => state.auth)
+  const navigate = useNavigate()
+  
 
-
+  // Effect to handle message changes
+  useEffect(() => {
+    if (message.success == 1) {
+      toast.success(message.message)
+      setTimeout(() => {
+        navigate("/login")
+        
+      }, 2000);
+    }else{
+      toast.error(message.message)
+    }
+  }, [message,navigate  ])
   return (
     <>
-     <>
-  {/* source: https://gist.github.com/nraloux/bce10c4148380061781b928cdab9b193 */}
-  {/* I have added support for dark mode and improved UI */}
   <div className="h-[100vh] bg-gray-400 dark:bg-gray-900 overflow-hidden">
     {/* Container */}
     <div className="mx-auto pt-[5rem] max-md:pt-[1rem]">
@@ -52,13 +67,27 @@ const Signup = () => {
                 alert("Password did not matched")
                 return;
               }
-              console.log(data);
+              let value= {...data};
+              if(data.image.length > 0) {
+                value = new FormData();
+                value.append("name",data.name);
+                value.append("email",data.email);
+                value.append("image",data.image[0]);
+                value.append("password",data.password);
+              }
+
+            dispatch(registerUser(value))
+          
+        //  console.log(value)
+          //  if(res.success === 1) {
+          //   toast.success(res.message)
+          //  }
  
             })}>
               <div className="mb-4 md:flex md:justify-between">
                 <div className="mb-4 md:mr-2 md:mb-0 w-full">
                   <label
-                    className="block mb-4 text-sm font-bold text-white"
+                    className="block mb-4 text-sm font-bold text-black"
                     htmlFor="firstName"
                   >
                     Name <span className='text-red-600'>*</span>
@@ -75,7 +104,7 @@ const Signup = () => {
               </div>
               <div className="mb-4">
                 <label
-                  className="block mb-2 text-sm font-bold text-white"
+                  className="block mb-2 text-sm font-bold text-black"
                   htmlFor="email"
                 >
                   Email <span className='text-red-600'>*</span>
@@ -91,7 +120,7 @@ const Signup = () => {
               </div>
               <div className="mb-4">
                 <label
-                  className="block mb-2 text-sm font-bold text-white"
+                  className="block mb-2 text-sm font-bold text-black"
                   htmlFor="image"
                 >
                   Image
@@ -101,14 +130,14 @@ const Signup = () => {
                   id="image"
                   type="file"
                   accept='image/*'
-                  {...register("image",{required:"Please select your image"})}
+                  {...register("image")}
                 />
                  {errors.image && <p className="text-red-900">{errors.image.message}</p>}
               </div>
               <div className="mb-4 md:flex md:justify-between">
                 <div className="mb-4 md:mr-2 md:mb-0">
                   <label
-                    className="block mb-2 text-sm font-bold text-white"
+                    className="block mb-2 text-sm font-bold text-black"
                     htmlFor="password"
                   >
                     Password <span className='text-red-600'>*</span>
@@ -136,9 +165,7 @@ const Signup = () => {
                     placeholder="******************"
                     onChange={(e) => setCPassword(e.target.value)}
                   />
-                  { matched &&  <p className="text-xs italic">
-                    Password did not matched
-                  </p>}
+            
                 </div>
               </div>
               <div className="mb-6 text-center">
@@ -171,9 +198,7 @@ const Signup = () => {
         </div>
       </div>
     </div>
-  </div>
-</>
- 
+  </div> 
     </>
   )
 }

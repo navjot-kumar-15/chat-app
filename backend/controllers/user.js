@@ -10,7 +10,7 @@ function generateToken(id) {
 // Register user 
 export const registerUser = async (req,res) => {
     try {
-        const {name,email,image,password} = req.body
+        const {name,email,password} = req.body
        
         if(!name || !email || !password) {
             return res.send({
@@ -30,7 +30,7 @@ export const registerUser = async (req,res) => {
 
         // New user 
         const newUser = await User.create({
-            name,email,image,password:hashPass
+            name,email,pic:req.file && `/avatar/${req.file.filename}`,password:hashPass
         });
 
         return res.send({
@@ -98,5 +98,40 @@ export const getSingleUser = async (req,res) => {
             success:0,
             message:error.message
         }) 
+    }
+}
+
+// Search user 
+export const searchUser = async (req,res) => {
+    try {
+        const {q} = req.query;
+        if(!q) {
+            return res.send({
+                success:0,
+                message:"Please enter some value to search"
+            })
+        }
+        const regex = new RegExp(q,"i")
+        const users = await User.find({
+            $and:[
+                {_id:{$ne:req.user._id}},
+              {  $or:[
+                    {name:{$regex:regex}},
+                    {email:{$regex:regex}}
+                ]}
+            ]
+       
+        })
+
+        return res.send({
+            success:1,
+            message:"User fetched successfully",
+            details:users
+        })
+    } catch (error) {
+        return res.send({
+            success:0,
+            message:error.message
+        })
     }
 }
