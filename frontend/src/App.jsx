@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import { ToastContainer } from "react-toastify";
@@ -6,21 +6,33 @@ import "react-toastify/dist/ReactToastify.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Protect from "./pages/Protect";
+
+
+
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element:<Protect><Home /> </Protect>,
+  },
+  {
+    path: "/login",
+    element:<Protect>  <Login /></Protect>,
+  },
+  {
+    path: "/signup",
+    element:<Signup />,
+  },
+]);
+
+
 const App = () => {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element:<Protect><Home /> </Protect>,
-    },
-    {
-      path: "/login",
-      element:<Protect>  <Login /></Protect>,
-    },
-    {
-      path: "/signup",
-      element:<Signup />,
-    },
-  ]);
+
+  useEffect(() => {
+
+    
+  },[])
   return (
     <>
       <RouterProvider router={router} />

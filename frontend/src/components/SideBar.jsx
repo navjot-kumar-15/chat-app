@@ -1,15 +1,15 @@
 import { Button, Drawer } from "flowbite-react";
 
-export default function SideBar ({isOpen,setIsOpen,handleClose}) {
+export default function SideBar ({isOpen,setIsOpen,handleClose,children}) {
 
 
   return (
     <>
      
       <Drawer open={isOpen} onClose={handleClose}>
-        <Drawer.Header title="Drawer" />
+        <Drawer.Header title="Chatty App" />
         <Drawer.Items>
-          <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
+          {/* <p className="mb-6 text-sm text-gray-500 dark:text-gray-400">
             Supercharge your hiring by taking advantage of our&nbsp;
             <a href="#" className="text-cyan-600 underline hover:no-underline dark:text-cyan-500">
               limited-time sale
@@ -45,7 +45,8 @@ export default function SideBar ({isOpen,setIsOpen,handleClose}) {
                 />
               </svg>
             </a>
-          </div>
+          </div> */}
+          {children}
         </Drawer.Items>
       </Drawer>
     </>
