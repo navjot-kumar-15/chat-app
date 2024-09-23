@@ -6,33 +6,40 @@ import "react-toastify/dist/ReactToastify.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Protect from "./pages/Protect";
-
-
-
-
+import { useDispatch } from "react-redux";
+import { getUserChats } from "./features/chat/chatSlice";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element:<Protect><Home /> </Protect>,
+    element: (
+      <Protect>
+        <Home />{" "}
+      </Protect>
+    ),
   },
   {
     path: "/login",
-    element:<Protect>  <Login /></Protect>,
+    element: (
+      <Protect>
+        {" "}
+        <Login />
+      </Protect>
+    ),
   },
   {
     path: "/signup",
-    element:<Signup />,
+    element: <Signup />,
   },
 ]);
 
-
 const App = () => {
-
+  const dispatch = useDispatch();
+  const token = JSON.parse(localStorage.getItem("token"));
   useEffect(() => {
+    dispatch(getUserChats());
+  }, [token]);
 
-    
-  },[])
   return (
     <>
       <RouterProvider router={router} />

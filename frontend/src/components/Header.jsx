@@ -1,22 +1,156 @@
-import React from "react";
-import { Button } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { Avatar, Dropdown, Button, Modal, Badge, HR } from "flowbite-react";
 import SideBar from "./SideBar";
-const Header = ({isOpen, setIsOpen, handleClose}) => {
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
+import { handleLogout } from "../features/auth/authSlice";
+import { searchUser } from "../features/chat/chatSlice";
+
+const URL = import.meta.env.VITE_REACT_URL;
+
+const Header = ({ isOpen, setIsOpen, handleClose }) => {
+  const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
+  const { query } = useSelector((state) => state.chat);
+  // console.log(query);
   return (
-    <div className="flex items-center h-[5vh] p-3">
+    <div className="flex items-center h-[8vh] p-3 pr-[4rem]">
       <div className="logo flex-1">Logo</div>
-      <div className="user flex gap-4 items-center">
-        <div>User</div>
+      <div className="user flex gap-4 items-center max-md:ml-4">
+        <div className="relative ">
+          <input
+            type="text"
+            placeholder="Search here"
+            className="block md:hidden"
+            onChange={(e) => {
+              dispatch(searchUser(e.target.value));
+            }}
+          />
+
+          <div className="absolute top-[3rem] w-[100%] h-full z-50 block md:hidden">
+            {query &&
+              query?.details?.map((q) => (
+                <>
+                  <Badge
+                    key={q._id}
+                    color="info"
+                    className="p-2 border-b border-black "
+                    onClick={() => {
+                      // dispatch(singleChat(q?._id));
+                      // handleClose();
+                      // setInput("");
+                    }}
+                  >
+                    <div className="block flex justify-center items-center gap-[2rem]">
+                      <span>
+                        <Avatar
+                          img={`${URL}${q?.pic}`}
+                          alt="avatar of Jese"
+                          rounded
+                        />
+                      </span>
+                      <span className="text-lg font-bold">{q?.name}</span>
+                    </div>
+                  </Badge>
+                </>
+              ))}
+          </div>
+
+          {/* {query &&
+            query?.details?.map((q, i) => (
+              <Badge
+                key={q._id}
+                color="info"
+                className="p-2 mt-4 absolute top-[3rem] w-[100%]  "
+                onClick={() => {
+                  // dispatch(singleChat(q?._id));
+                  // handleClose();
+                  // setInput("");
+                }}
+              >
+                <div className="block flex justify-center items-center gap-[2rem]">
+                  <span>
+                    <Avatar
+                      img={`${URL}${q?.pic}`}
+                      alt="avatar of Jese"
+                      rounded
+                    />
+                  </span>
+                  <span className="text-lg font-bold">{q?.name}</span>
+                </div>
+              </Badge>
+            ))} */}
+        </div>
+        <div className="">
+          <i className="ri-notification-line text-2xl mr-3 text-gray-500"></i>
+        </div>
+        <div>
+          <div>
+            <Dropdown
+              label={
+                <Avatar
+                  alt="User settings"
+                  img="https://plus.unsplash.com/premium_photo-1666900440561-94dcb6865554?q=80&w=2127&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  rounded
+                />
+              }
+              arrowIcon={false}
+              inline
+              className="max-md:w-auto w-[8vw]"
+            >
+              <Dropdown.Item>Profile</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item onClick={() => setOpenModal(true)}>
+                Sign out
+              </Dropdown.Item>
+            </Dropdown>
+          </div>
+        </div>
 
         <div className="hidden max-md:block">
-          <p onClick={() => setIsOpen(true)}><i className="ri-menu-3-line text-2xl font-bold"></i></p>
-        <SideBar
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          handleClose={handleClose}
-        />
+          <p onClick={() => setIsOpen(true)}>
+            <i className="ri-menu-3-line text-3xl font-bold text-gray-500"></i>
+          </p>
+          <SideBar
+            isOpen={isOpen}
+            setIsOpen={setIsOpen}
+            handleClose={handleClose}
+          >
+            {/* <SearchUser /> */}
+          </SideBar>
         </div>
       </div>
+      <Modal
+        show={openModal}
+        size="md"
+        onClose={() => setOpenModal(false)}
+        popup
+        className="max-md:pt-[18rem]"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Are you sure you want to logout?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={() => {
+                  dispatch(handleLogout());
+                  setOpenModal(false);
+                }}
+              >
+                {"Yes, I'm sure"}
+              </Button>
+              <Button color="gray" onClick={() => setOpenModal(false)}>
+                No, cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

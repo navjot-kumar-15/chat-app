@@ -1,4 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
+const URL = import.meta.env.VITE_REACT_URL;
+
 import axios from "axios";
 
 const initialState = {
@@ -8,7 +11,7 @@ const initialState = {
   token: null,
   message: "",
 };
-const URL = "http://localhost:8080";
+// const URL = "http://localhost:8080";
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (value) => {
@@ -49,6 +52,16 @@ export const getUserInfo = createAsyncThunk("auth/getUserInfo", async () => {
 export const authSlice = createSlice({
   name: "auth",
   initialState,
+  reducers: {
+    handleLogout: (state, action) => {
+      localStorage.removeItem("token");
+      state.token = null;
+      toast.success("Logged out successfully");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+    },
+  },
   extraReducers: (builder) => {
     // Register user start
     builder.addCase(registerUser.pending, (state, action) => {
@@ -92,6 +105,6 @@ export const authSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-// export const { increment, decrement, incrementByAmount } = auth.actions
+export const { handleLogout } = authSlice.actions;
 
 export default authSlice.reducer;
