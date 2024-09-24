@@ -54,11 +54,11 @@ const Home = () => {
         handleClose={() => setIsOpen(false)}
       />
 
-      <div className="min-h-[91vh] min-w-[100%] flex gap-2">
+      <div className="h-[95%] min-w-[100%] flex gap-2 relative">
         <div
-          className={`left flex flex-col gap-3 w-[20%] max-lg:w-[30%] p-3 overflow-hidden bg-gray-200 max-md:w-[100%] ${
+          className={`left h-auto  flex flex-col gap-3 w-[20%] max-lg:w-[30%] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
             selected ? "max-md:hidden" : "max-md:block"
-          }`}
+          } max-md:h-[100vh]`}
         >
           <div
             className="search w-[100%] flex justify-center cursor-pointer max-md:hidden"
@@ -86,6 +86,7 @@ const Home = () => {
               >
                 Create Group <i class="ri-add-line"></i>
               </button>
+
               <GroupModal openModal={openModal} setOpenModal={setOpenModal} />
             </div>
             {chatLists?.map((d, i) => (
@@ -103,7 +104,9 @@ const Home = () => {
                         key={d?._id}
                         onClick={() => {
                           if (d.isGroupChat) {
-                            dispatch(setSelected({ chatName: d.chatName }));
+                            dispatch(
+                              setSelected({ chatName: d.chatName, _id: d._id })
+                            );
                             dispatch(groupUsers(d.users));
                           } else {
                             dispatch(setSelected(v));
@@ -131,7 +134,7 @@ const Home = () => {
           </div>
         </div>
         <div
-          className={`right flex flex-col w-[80%] max-md:w-[100%] relative ${
+          className={`right flex flex-col w-[80%] max-md:w-[100%] relative h-auto ${
             selected ? "max-md:block" : "max-md:hidden"
           } `}
         >

@@ -6,7 +6,7 @@ const Messages = () => {
       <>
         {/* component */}
         <div className="flex h-screen antialiased text-gray-800">
-          <div className="flex flex-row h-full w-full overflow-x-hidden">
+          <div className="flex flex-row h-auto w-full overflow-x-hidden">
             <div className="flex flex-col flex-auto h-full">
               <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
                 <div className="flex flex-col h-full overflow-auto mb-4">

@@ -22,7 +22,7 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
           <i className="ri-notification-line text-2xl mr-3 text-gray-500"></i>
         </div>
         <div>
-          <div>
+          <div className="z-50">
             <Dropdown
               label={
                 <Avatar
@@ -33,7 +33,7 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
               }
               arrowIcon={false}
               inline
-              className="max-md:w-auto w-[8vw]"
+              className="max-md:w-auto w-[8vw] z-50"
             >
               <Dropdown.Item>Profile</Dropdown.Item>
               <Dropdown.Divider />

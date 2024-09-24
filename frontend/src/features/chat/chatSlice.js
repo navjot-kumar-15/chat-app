@@ -83,6 +83,9 @@ export const chatSlice = createSlice({
     groupUsers: (state, action) => {
       state.groupUsers = action.payload;
     },
+    resetQuery: (state, action) => {
+      state.query = "";
+    },
   },
   extraReducers: (builder) => {
     // Search user start
@@ -127,7 +130,12 @@ export const chatSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { searchQuery, setOtherUserId, setSelected, groupUsers } =
-  chatSlice.actions;
+export const {
+  searchQuery,
+  setOtherUserId,
+  setSelected,
+  groupUsers,
+  resetQuery,
+} = chatSlice.actions;
 
 export default chatSlice.reducer;
