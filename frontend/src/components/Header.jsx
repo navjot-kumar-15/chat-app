@@ -5,6 +5,7 @@ import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { handleLogout } from "../features/auth/authSlice";
 import { searchUser } from "../features/chat/chatSlice";
+import SearchUser from "./SearchUser";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
@@ -15,72 +16,8 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
   // console.log(query);
   return (
     <div className="flex items-center h-[8vh] p-3 pr-[4rem]">
-      <div className="logo flex-1">Logo</div>
+      <div className="logo flex-1 font-extrabold text-3xl italic">Chatty</div>
       <div className="user flex gap-4 items-center max-md:ml-4">
-        <div className="relative ">
-          <input
-            type="text"
-            placeholder="Search here"
-            className="block md:hidden"
-            onChange={(e) => {
-              dispatch(searchUser(e.target.value));
-            }}
-          />
-
-          <div className="absolute top-[3rem] w-[100%] h-full z-50 block md:hidden">
-            {query &&
-              query?.details?.map((q) => (
-                <>
-                  <Badge
-                    key={q._id}
-                    color="info"
-                    className="p-2 border-b border-black "
-                    onClick={() => {
-                      // dispatch(singleChat(q?._id));
-                      // handleClose();
-                      // setInput("");
-                    }}
-                  >
-                    <div className="block flex justify-center items-center gap-[2rem]">
-                      <span>
-                        <Avatar
-                          img={`${URL}${q?.pic}`}
-                          alt="avatar of Jese"
-                          rounded
-                        />
-                      </span>
-                      <span className="text-lg font-bold">{q?.name}</span>
-                    </div>
-                  </Badge>
-                </>
-              ))}
-          </div>
-
-          {/* {query &&
-            query?.details?.map((q, i) => (
-              <Badge
-                key={q._id}
-                color="info"
-                className="p-2 mt-4 absolute top-[3rem] w-[100%]  "
-                onClick={() => {
-                  // dispatch(singleChat(q?._id));
-                  // handleClose();
-                  // setInput("");
-                }}
-              >
-                <div className="block flex justify-center items-center gap-[2rem]">
-                  <span>
-                    <Avatar
-                      img={`${URL}${q?.pic}`}
-                      alt="avatar of Jese"
-                      rounded
-                    />
-                  </span>
-                  <span className="text-lg font-bold">{q?.name}</span>
-                </div>
-              </Badge>
-            ))} */}
-        </div>
         <div className="">
           <i className="ri-notification-line text-2xl mr-3 text-gray-500"></i>
         </div>
@@ -116,7 +53,7 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
             setIsOpen={setIsOpen}
             handleClose={handleClose}
           >
-            {/* <SearchUser /> */}
+            <SearchUser />
           </SideBar>
         </div>
       </div>

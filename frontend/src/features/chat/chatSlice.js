@@ -1,39 +1,54 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-const URL = import.meta.env.VITE_REACT_URL;
-
 import axios from "axios";
 
+const URL = import.meta.env.VITE_REACT_URL;
+
 const initialState = {
+  chatLists: [],
   query: "",
   isLoading: false,
   isError: false,
   otherUserId: "",
-  chatLists: [],
+  selected: null,
+  groupUsers: [],
 };
 
-const token = JSON.parse(localStorage.getItem("token"));
-const config = {
-  headers: {
-    token,
-  },
-};
+function configToken() {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const config = {
+    headers: {
+      token,
+    },
+  };
+  return config;
+}
 
 // Search user
-export const searchUser = createAsyncThunk("chat/searchUser", async (value) => {
-  try {
-    const { data } = await axios.get(
-      `${URL}/api/user/search?q=${value}`,
-      config
-    );
-    return data;
-  } catch (error) {
-    console.log(error.message);
+export const searchUser = createAsyncThunk(
+  "/chat/searchUser",
+  async (value) => {
+    try {
+      // const config = {
+      //   headers: {
+      //     token,
+      //   },
+      // };
+      const config = configToken();
+      const { data } = await axios.get(
+        `${URL}/api/user/search?q=${value}`,
+        config
+      );
+      return data;
+    } catch (error) {
+      console.log(error.message);
+    }
   }
-});
+);
 
 // Access chat
-export const singleChat = createAsyncThunk("chat/singleChat", async (id) => {
+export const singleChat = createAsyncThunk("/chat/singleChat", async (id) => {
   try {
+    const config = configToken();
     const { data } = await axios.get(`${URL}/api/chat?userId=${id}`, config);
     return data;
   } catch (error) {
@@ -42,8 +57,9 @@ export const singleChat = createAsyncThunk("chat/singleChat", async (id) => {
 });
 
 // Get users chat
-export const getUserChats = createAsyncThunk("chat/getUserChats", async () => {
+export const getUserChats = createAsyncThunk("/chat/getUserChats", async () => {
   try {
+    const config = configToken();
     const { data } = await axios.get(`${URL}/api/chat/userChat`, config);
     return data.details;
   } catch (error) {
@@ -60,6 +76,12 @@ export const chatSlice = createSlice({
     },
     setOtherUserId: (state, action) => {
       state.otherUserId = action.payload;
+    },
+    setSelected: (state, action) => {
+      state.selected = action.payload;
+    },
+    groupUsers: (state, action) => {
+      state.groupUsers = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -105,6 +127,7 @@ export const chatSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { searchQuery, setOtherUserId } = chatSlice.actions;
+export const { searchQuery, setOtherUserId, setSelected, groupUsers } =
+  chatSlice.actions;
 
 export default chatSlice.reducer;
