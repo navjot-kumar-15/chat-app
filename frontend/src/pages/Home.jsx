@@ -10,20 +10,23 @@ import { Tooltip } from "flowbite-react";
 import {
   getUserChats,
   groupUsers,
+  resetSetSelected,
   setSelected,
 } from "../features/chat/chatSlice";
 import Messages from "../components/Messages";
 import GroupModal from "../components/GroupModal";
+import Profile from "../components/Profile";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
 const Home = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  const { chatLists, selected } = useSelector((state) => state.chat);
+  const { chatLists, selected, isSuccess } = useSelector((state) => state.chat);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [profileView, setProfileView] = useState(false);
 
   const token = JSON.parse(localStorage.getItem("token"));
 
@@ -40,7 +43,7 @@ const Home = () => {
 
   useEffect(() => {
     dispatch(getUserChats());
-  }, [selected]);
+  }, [selected, isSuccess]);
 
   function capitalizeWord(str) {
     return str?.charAt(0)?.toUpperCase() + str?.slice(1, str.length);
@@ -75,7 +78,7 @@ const Home = () => {
             setIsOpen={setIsOpen}
             handleClose={() => setIsOpen(false)}
           >
-            <SearchUser handleClose={() => setIsOpen(false)} />
+            <SearchUser handleClose={() => setIsOpen(false)} isOpen={isOpen} />
           </SideBar>
           <div className="chats flex flex-col items-center justify-center mt-4">
             <div className="mb-[2rem] flex items-center gap-6 justify-between">
@@ -110,6 +113,7 @@ const Home = () => {
                           setSelected({
                             chatName: d.chatName,
                             _id: d._id,
+                            users: d?.users,
                           })
                         );
                         // Putting all the users who have joined in group
@@ -234,11 +238,21 @@ const Home = () => {
           } `}
         >
           <div
-            className="chat-name p-2 bg-gray-200 w-[100%] text-center absolute top-0 z-30"
+            className={`chat-name p-2 bg-gray-200 w-[100%] ${
+              !selected ? "text-center" : "flex justify-between items-center"
+            }  absolute top-0 z-30`}
             style={{
               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
             }}
           >
+            {selected && (
+              <span
+                className="float-left text-xl cursor-pointer"
+                onClick={() => dispatch(resetSetSelected())}
+              >
+                <i class="ri-arrow-left-line"></i>
+              </span>
+            )}
             <p className="font-bold">
               {selected && selected?.chatName
                 ? capitalizeWord(
@@ -247,9 +261,25 @@ const Home = () => {
                       : selected?.name
                   )
                 : selected
-                ? `${selected.name}`
+                ? capitalizeWord(selected?.name)
                 : "Not selected any chat"}
             </p>
+            {selected && (
+              <>
+                <span
+                  className="float-right text-xl relative"
+                  onClick={() => setProfileView(true)}
+                >
+                  <i class="ri-more-2-fill"></i>
+                </span>
+                <div className="absolute top-5 right-[4rem] z-40">
+                  <Profile
+                    profileView={profileView}
+                    setProfileView={setProfileView}
+                  />
+                </div>
+              </>
+            )}
           </div>
           <div className="min-h-[94%] pt-[2rem]">
             <Messages />

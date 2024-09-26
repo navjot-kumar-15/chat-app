@@ -1,11 +1,15 @@
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
+import { useSelector } from "react-redux";
+import EmojiPicker from "emoji-picker-react";
 
 const Messages = () => {
+  const { selected } = useSelector((state) => state.chat);
+  const [emoji, setEmoji] = useState(false);
+  const [valueInput, setValueInput] = useState("");
   return (
     <>
-      <>
-        {/* component */}
-        <div className="flex h-screen antialiased text-gray-800">
+      <div className="flex h-screen antialiased text-gray-800">
+        {selected && (
           <div className="flex flex-row h-auto w-full overflow-x-hidden">
             <div className="flex flex-col flex-auto h-full">
               <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
@@ -100,8 +104,15 @@ const Messages = () => {
                       <input
                         type="text"
                         className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
+                        onChange={(e) => {
+                          setValueInput(e.target.value);
+                        }}
+                        value={valueInput}
                       />
-                      <button className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600">
+                      <button
+                        onClick={() => setEmoji(!emoji)}
+                        className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
+                      >
                         <svg
                           className="w-6 h-6"
                           fill="none"
@@ -116,6 +127,15 @@ const Messages = () => {
                             d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
+                        {emoji && (
+                          <div className="absolute right-0 top-[-30rem] z-30">
+                            <EmojiPicker
+                              onEmojiClick={(d) => {
+                                setValueInput((prev) => prev + d.emoji);
+                              }}
+                            />{" "}
+                          </div>
+                        )}
                       </button>
                     </div>
                   </div>
@@ -144,8 +164,8 @@ const Messages = () => {
               </div>
             </div>
           </div>
-        </div>
-      </>
+        )}
+      </div>
     </>
   );
 };

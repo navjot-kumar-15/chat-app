@@ -109,6 +109,9 @@ export const chatSlice = createSlice({
     resetQuery: (state, action) => {
       state.query = "";
     },
+    resetSetSelected: (state, action) => {
+      state.selected = null;
+    },
   },
   extraReducers: (builder) => {
     // Search user start
@@ -172,6 +175,7 @@ export const {
   setSelected,
   groupUsers,
   resetQuery,
+  resetSetSelected,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

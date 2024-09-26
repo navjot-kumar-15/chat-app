@@ -1,4 +1,4 @@
-import React, { useState, memo } from "react";
+import React, { useState, memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   searchUser,
@@ -9,11 +9,20 @@ import { Avatar, Badge } from "flowbite-react";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
-const SearchUser = ({ handleClose }) => {
+const SearchUser = ({ handleClose, isOpen }) => {
   const [input, setInput] = useState("");
   const dispatch = useDispatch();
   const { isLoading, query } = useSelector((state) => state.chat);
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+  };
 
+  useEffect(() => {
+    if (input) {
+      dispatch(searchUser(input));
+    }
+  }, [dispatch, input]);
   return (
     <>
       <div className="flex flex-col gap-4 justify-center w-[100%]">
@@ -22,9 +31,8 @@ const SearchUser = ({ handleClose }) => {
             type="text"
             placeholder="Search here..."
             className="border-b-4"
-            onChange={(e) => {
-              dispatch(searchUser(e.target.value));
-            }}
+            value={input}
+            onChange={handleChange}
           />
         </form>
         <div className="search-result">

@@ -9,17 +9,24 @@ import {
   Avatar,
 } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import chatSlice, {
+import {
   createGroupChat,
   getUserChats,
   resetQuery,
   searchUser,
 } from "../features/chat/chatSlice";
 import { toast } from "react-toastify";
+import { useForm } from "react-hook-form";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
 const GroupModal = ({ openModal, setOpenModal, text }) => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
   const { query, isSuccess, chatLists } = useSelector((state) => state.chat);
@@ -41,7 +48,24 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
         >
           <Modal.Header />
           <Modal.Body className="mb-5">
-            <div className="space-y-6 h-[30vh]">
+            <form
+              className="space-y-6 h-[30vh]"
+              onClick={handleSubmit((data) => {
+                if (!data.name || !users) {
+                  toast.error("Please enter all the fields");
+                  return;
+                }
+                const data1 = {
+                  name: data.name,
+                  users: JSON.stringify(users),
+                };
+
+                dispatch(createGroupChat(data1));
+                if (isSuccess) {
+                  setOpenModal(false);
+                }
+              })}
+            >
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Create Group Chat
               </h3>
@@ -52,10 +76,11 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                 <TextInput
                   id="chatName"
                   placeholder="Enter Chat Name"
-                  // value={email}
-                  onChange={(e) => setChat(e.target.value)}
-                  required
+                  {...register("name", { required: "Please enter Chat Name" })}
                 />
+                {errors.name && (
+                  <p className="text-red-700">{errors.name.message}</p>
+                )}
               </div>
               <div>
                 <div className="mb-2 block">
@@ -77,7 +102,7 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                                 );
                               }}
                             >
-                              X
+                              <i class="ri-close-line"></i>
                             </p>
                           </div>
                         </Badge>
@@ -100,19 +125,26 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                         query?.details?.slice(0, 3)?.map((q, i) => (
                           <Badge
                             color="info"
-                            className="p-2 flex  overflow-hidden cursor-pointer w-fit"
+                            className="pl-1 pr-1 flex  overflow-hidden cursor-pointer w-fit"
                             onClick={() => {
+                              // console.log(q);
+                              if (users.find((d) => d._id === q._id)) {
+                                toast.warning("Already added");
+                                return;
+                              }
+                              // console.log();
                               // Todo : Duplicate entry passing
                               setUsers([...users, q]);
                               dispatch(resetQuery());
                             }}
                           >
-                            <div className=" flex justify-center items-center gap-[2rem]">
+                            <div className=" flex justify-center items-center gap-[.9rem]">
                               <span>
                                 <Avatar
                                   img={`${URL}${q?.pic}`}
                                   alt="avatar of Jese"
                                   rounded
+                                  className=""
                                 />
                               </span>
                               <span className="text-lg font-bold">
@@ -124,21 +156,7 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                     </div>
                   </div>
                   {text == "Create" ? (
-                    <Button
-                      onClick={() => {
-                        const data = {
-                          name: chat,
-                          users: JSON.stringify(users),
-                        };
-
-                        dispatch(createGroupChat(data));
-                        if (isSuccess) {
-                          toast.success("Group Created successfully");
-                        }
-                      }}
-                    >
-                      Create
-                    </Button>
+                    <Button type="submit">Create</Button>
                   ) : (
                     <div className="flex gap-5">
                       <Button color="success">Update</Button>
@@ -147,7 +165,7 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                   )}
                 </div>
               </div>
-            </div>
+            </form>
             <div></div>
           </Modal.Body>
         </Modal>
