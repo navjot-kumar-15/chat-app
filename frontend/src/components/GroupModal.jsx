@@ -49,8 +49,8 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
           <Modal.Header />
           <Modal.Body className="mb-5">
             <form
-              className="space-y-6 h-[30vh]"
-              onClick={handleSubmit((data) => {
+              className="space-y-6 h-[40vh]"
+              onSubmit={handleSubmit((data) => {
                 if (!data.name || !users) {
                   toast.error("Please enter all the fields");
                   return;
@@ -61,9 +61,8 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                 };
 
                 dispatch(createGroupChat(data1));
-                if (isSuccess) {
-                  setOpenModal(false);
-                }
+                dispatch(getUserChats());
+                setUsers([]);
               })}
             >
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
@@ -141,10 +140,13 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                             <div className=" flex justify-center items-center gap-[.9rem]">
                               <span>
                                 <Avatar
-                                  img={`${URL}${q?.pic}`}
+                                  img={`${
+                                    q?.pic?.startsWith("https")
+                                      ? `${q?.pic}`
+                                      : `${URL}${q?.pic}`
+                                  }`}
                                   alt="avatar of Jese"
                                   rounded
-                                  className=""
                                 />
                               </span>
                               <span className="text-lg font-bold">

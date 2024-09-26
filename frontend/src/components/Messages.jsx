@@ -1,14 +1,35 @@
-import React, { memo, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 
 const Messages = () => {
   const { selected } = useSelector((state) => state.chat);
   const [emoji, setEmoji] = useState(false);
+  const emojiPickerRef = useRef(null);
   const [valueInput, setValueInput] = useState("");
+
+  const handleEmojiClick = (d) => {
+    setValueInput((prev) => prev + d.emoji);
+  };
+
+  const handleClickOutside = (event) => {
+    if (
+      emojiPickerRef.current &&
+      !emojiPickerRef.current.contains(event.target)
+    ) {
+      setEmoji(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
   return (
     <>
-      <div className="flex h-screen antialiased text-gray-800">
+      <div className="flex h-[88vh] antialiased text-gray-800">
         {selected && (
           <div className="flex flex-row h-auto w-full overflow-x-hidden">
             <div className="flex flex-col flex-auto h-full">
@@ -128,12 +149,11 @@ const Messages = () => {
                           />
                         </svg>
                         {emoji && (
-                          <div className="absolute right-0 top-[-30rem] z-30">
-                            <EmojiPicker
-                              onEmojiClick={(d) => {
-                                setValueInput((prev) => prev + d.emoji);
-                              }}
-                            />{" "}
+                          <div
+                            ref={emojiPickerRef}
+                            className="absolute right-0 top-[-30rem] z-30 max-md:w-[40vw] max-md:right-[3rem] max-sm:w-[20vw] max-sm:right-[9rem]"
+                          >
+                            <EmojiPicker onEmojiClick={handleEmojiClick} />
                           </div>
                         )}
                       </button>

@@ -6,16 +6,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleLogout } from "../features/auth/authSlice";
 import { searchUser } from "../features/chat/chatSlice";
 import SearchUser from "./SearchUser";
+import UserVIew from "./UserVIew";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
 const Header = ({ isOpen, setIsOpen, handleClose }) => {
   const [openModal, setOpenModal] = useState(false);
+  const [pView, setPView] = useState(false);
   const dispatch = useDispatch();
   const { query } = useSelector((state) => state.chat);
   // console.log(query);
   return (
-    <div className="flex items-center h-[8vh] p-3 pr-[4rem]">
+    <div className="flex items-center h-[8vh] p-3 pr-[2rem]">
       <div className="logo flex-1 font-extrabold text-3xl italic">Chatty</div>
       <div className="user flex gap-4 items-center max-md:ml-4">
         <div className="">
@@ -35,13 +37,16 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
               inline
               className="max-md:w-auto w-[8vw] z-50"
             >
-              <Dropdown.Item>Profile</Dropdown.Item>
+              <Dropdown.Item onClick={() => setPView(true)}>
+                <span>Profile</span>
+              </Dropdown.Item>
               <Dropdown.Divider />
               <Dropdown.Item onClick={() => setOpenModal(true)}>
                 Sign out
               </Dropdown.Item>
             </Dropdown>
           </div>
+          {pView && <UserVIew setPView={setPView} pView={pView} />}
         </div>
 
         <div className="hidden max-md:block">

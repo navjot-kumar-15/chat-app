@@ -59,8 +59,8 @@ const Home = () => {
 
       <div className="h-[95%] min-w-[100%] flex gap-2 relative">
         <div
-          className={`left h-auto  flex flex-col gap-3 w-[20%] max-lg:w-[30%] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
-            selected ? "max-md:hidden" : "max-md:block"
+          className={`left h-auto  flex flex-col max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
+            selected ? "max-lg:hidden" : "max-lg:block"
           } max-md:h-[100vh]`}
         >
           <div
@@ -78,7 +78,11 @@ const Home = () => {
             setIsOpen={setIsOpen}
             handleClose={() => setIsOpen(false)}
           >
-            <SearchUser handleClose={() => setIsOpen(false)} isOpen={isOpen} />
+            <SearchUser
+              handleClose={() => setIsOpen(false)}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
           </SideBar>
           <div className="chats flex flex-col items-center justify-center mt-4">
             <div className="mb-[2rem] flex items-center gap-6 justify-between">
@@ -102,7 +106,7 @@ const Home = () => {
                   <>
                     <Badge
                       color="success"
-                      className={`mb-4 max-md:w-[50vw] cursor-pointer ${
+                      className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] cursor-pointer ${
                         selected?._id === d?._id
                           ? "bg-green-400 text-white"
                           : ""
@@ -114,6 +118,7 @@ const Home = () => {
                             chatName: d.chatName,
                             _id: d._id,
                             users: d?.users,
+                            groupAdmin: d?.groupAdmin,
                           })
                         );
                         // Putting all the users who have joined in group
@@ -122,7 +127,7 @@ const Home = () => {
                     >
                       <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
                         <span className="font-bold">{i + 1}</span>
-                        <span className=" max-md:mr-8">
+                        <span className=" max-md:mr-5">
                           <Avatar
                             img="https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg"
                             alt=""
@@ -143,7 +148,7 @@ const Home = () => {
                         {userInfo?.details?._id !== v._id && (
                           <Badge
                             color="success"
-                            className={`mb-4 max-md:w-[50vw] cursor-pointer ${
+                            className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw]  cursor-pointer ${
                               selected?._id === v?._id
                                 ? "bg-green-400 text-white"
                                 : ""
@@ -155,12 +160,15 @@ const Home = () => {
                           >
                             <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
                               <span className="font-bold">{i + 1}</span>
-                              <span className=" max-md:mr-8">
+                              <span className=" max-md:mr-5">
                                 <Avatar
                                   img={`${
-                                    d?.isGroupChat
-                                      ? `https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg`
-                                      : `${URL}${v?.pic}`
+                                    d?.isGroupChat !== true &&
+                                    `${
+                                      v?.pic?.startsWith("http")
+                                        ? `${v?.pic}`
+                                        : `${URL}${v?.pic}`
+                                    }`
                                   }`}
                                   alt=""
                                   rounded
@@ -233,14 +241,14 @@ const Home = () => {
           </div>
         </div>
         <div
-          className={`right flex flex-col w-[80%] max-md:w-[100%] relative h-auto ${
-            selected ? "max-md:block" : "max-md:hidden"
+          className={`right flex flex-col w-[80%] max-lg:w-[100%] relative h-auto ${
+            selected ? "max-lg:block" : "max-lg:hidden"
           } `}
         >
           <div
             className={`chat-name p-2 bg-gray-200 w-[100%] ${
               !selected ? "text-center" : "flex justify-between items-center"
-            }  absolute top-0 z-30`}
+            }  absolute top-0 z-20`}
             style={{
               boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
             }}
@@ -267,7 +275,7 @@ const Home = () => {
             {selected && (
               <>
                 <span
-                  className="float-right text-xl relative"
+                  className="float-right text-xl relative cursor-pointer"
                   onClick={() => setProfileView(true)}
                 >
                   <i class="ri-more-2-fill"></i>
@@ -281,7 +289,7 @@ const Home = () => {
               </>
             )}
           </div>
-          <div className="min-h-[94%] pt-[2rem]">
+          <div className="min-h-[94%] pt-[2rem] bg-gray-100">
             <Messages />
           </div>
         </div>

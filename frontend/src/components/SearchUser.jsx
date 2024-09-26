@@ -9,7 +9,7 @@ import { Avatar, Badge } from "flowbite-react";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
-const SearchUser = ({ handleClose, isOpen }) => {
+const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
   const [input, setInput] = useState("");
   const dispatch = useDispatch();
   const { isLoading, query } = useSelector((state) => state.chat);
@@ -52,7 +52,8 @@ const SearchUser = ({ handleClose, isOpen }) => {
                 className="p-2 w-[100%] overflow-hidden cursor-pointer"
                 onClick={() => {
                   dispatch(singleChat(q?._id));
-                  handleClose();
+                  // handleClose();
+                  setIsOpen(false);
                   dispatch(setSelected(q));
                   // setInput("");
                 }}
@@ -60,7 +61,11 @@ const SearchUser = ({ handleClose, isOpen }) => {
                 <div className="block flex justify-center items-center gap-[2rem]">
                   <span>
                     <Avatar
-                      img={`${URL}${q?.pic}`}
+                      img={`${
+                        q?.pic?.startsWith("https")
+                          ? `${q?.pic}`
+                          : `${URL}${q?.pic}`
+                      }`}
                       alt="avatar of Jese"
                       rounded
                     />

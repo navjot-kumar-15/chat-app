@@ -82,10 +82,54 @@ export const createGroupChat = createAsyncThunk(
       );
       if (data.success == 1) {
         toast.success("Group Created successfully");
+        return data;
       }
-      return data;
     } catch (error) {
       console.log(error);
+    }
+  }
+);
+
+// Rename group chat
+export const renameGroupChat = createAsyncThunk(
+  "/chat/renameGroupChat",
+  async (value) => {
+    try {
+      const config = configToken();
+      const { data } = await axios.post(
+        `${URL}/api/chat/renameGroup`,
+        value,
+        config
+      );
+      if (data.success == 1) {
+        toast.success("Renamed successfully");
+        return data;
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+);
+
+// Remove user
+export const removeUserFromGroup = createAsyncThunk(
+  "/chat/removeUserFromGroup",
+  async (value) => {
+    try {
+      const config = configToken();
+      const { data } = await axios.post(
+        `${URL}/api/chat/removeUser`,
+        value,
+        config
+      );
+      if (data.success == 1) {
+        toast.success("User removed successfully");
+        return data;
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
     }
   }
 );
@@ -165,6 +209,34 @@ export const chatSlice = createSlice({
       state.isError = true;
     });
     // Create Group Chat end
+
+    // Rename Group Chat start
+    builder.addCase(renameGroupChat.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(renameGroupChat.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.selected = action.payload.details;
+    });
+    builder.addCase(renameGroupChat.rejected, (state, action) => {
+      state.isError = true;
+    });
+    // Rename  Group Chat end
+
+    // Remove user Group Chat start
+    builder.addCase(removeUserFromGroup.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(removeUserFromGroup.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.selected = action.payload.details;
+    });
+    builder.addCase(removeUserFromGroup.rejected, (state, action) => {
+      state.isError = true;
+    });
+    // Remove  Group Chat end
   },
 });
 
