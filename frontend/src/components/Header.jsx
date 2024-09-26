@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { Avatar, Dropdown, Button, Modal, Badge, HR } from "flowbite-react";
 import SideBar from "./SideBar";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -92,4 +92,4 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
   );
 };
 
-export default Header;
+export default memo(Header);

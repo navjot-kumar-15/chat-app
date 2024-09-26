@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo, useEffect } from "react";
 import {
   Button,
   Checkbox,
@@ -9,14 +9,26 @@ import {
   Avatar,
 } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { searchUser } from "../features/chat/chatSlice";
+import chatSlice, {
+  createGroupChat,
+  getUserChats,
+  resetQuery,
+  searchUser,
+} from "../features/chat/chatSlice";
+import { toast } from "react-toastify";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
-const GroupModal = ({ openModal, setOpenModal }) => {
+const GroupModal = ({ openModal, setOpenModal, text }) => {
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
-  const { query } = useSelector((state) => state.chat);
+  const { query, isSuccess, chatLists } = useSelector((state) => state.chat);
+  const [chat, setChat] = useState("");
+
+  useEffect(() => {
+    dispatch(getUserChats());
+  }, []);
+
   return (
     <>
       <div className="">
@@ -28,7 +40,7 @@ const GroupModal = ({ openModal, setOpenModal }) => {
           className="max-md:pt-[10rem]"
         >
           <Modal.Header />
-          <Modal.Body>
+          <Modal.Body className="mb-5">
             <div className="space-y-6 h-[30vh]">
               <h3 className="text-xl font-medium text-gray-900 dark:text-white">
                 Create Group Chat
@@ -41,7 +53,7 @@ const GroupModal = ({ openModal, setOpenModal }) => {
                   id="chatName"
                   placeholder="Enter Chat Name"
                   // value={email}
-                  // onChange={(event) => setEmail(event.target.value)}
+                  onChange={(e) => setChat(e.target.value)}
                   required
                 />
               </div>
@@ -73,23 +85,26 @@ const GroupModal = ({ openModal, setOpenModal }) => {
                   </div>
                 </div>
                 <div className="w-[80%] relative">
-                  <div className="flex gap-2 w-[100%]">
+                  <div className="flex gap-2 w-[100%] flex-col">
                     <TextInput
                       id="addUser"
                       type="text"
                       required
+                      placeholder="Enter name or email eg:John or john@gmail.com"
                       onChange={(e) => {
                         dispatch(searchUser(e.target.value));
                       }}
                     />
-                    <div className="overflow-auto absolute top-[4rem] w-[100%] flex gap-2 flex-wrap  ">
+                    <div className="overflow-auto w-[100%] flex gap-2 flex-wrap mb-4  ">
                       {query &&
                         query?.details?.slice(0, 3)?.map((q, i) => (
                           <Badge
                             color="info"
                             className="p-2 flex  overflow-hidden cursor-pointer w-fit"
                             onClick={() => {
+                              // Todo : Duplicate entry passing
                               setUsers([...users, q]);
+                              dispatch(resetQuery());
                             }}
                           >
                             <div className=" flex justify-center items-center gap-[2rem]">
@@ -108,12 +123,32 @@ const GroupModal = ({ openModal, setOpenModal }) => {
                         ))}
                     </div>
                   </div>
+                  {text == "Create" ? (
+                    <Button
+                      onClick={() => {
+                        const data = {
+                          name: chat,
+                          users: JSON.stringify(users),
+                        };
+
+                        dispatch(createGroupChat(data));
+                        if (isSuccess) {
+                          toast.success("Group Created successfully");
+                        }
+                      }}
+                    >
+                      Create
+                    </Button>
+                  ) : (
+                    <div className="flex gap-5">
+                      <Button color="success">Update</Button>
+                      <Button color="failure">Leave</Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <div>
-              <Button>Add</Button>
-            </div>
+            <div></div>
           </Modal.Body>
         </Modal>
       </div>
@@ -121,4 +156,4 @@ const GroupModal = ({ openModal, setOpenModal }) => {
   );
 };
 
-export default GroupModal;
+export default memo(GroupModal);

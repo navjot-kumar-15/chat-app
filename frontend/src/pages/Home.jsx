@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo, useMemo } from "react";
 import Header from "../components/Header";
 import { Button, Badge, Avatar } from "flowbite-react";
 import SideBar from "../components/SideBar";
@@ -43,7 +43,7 @@ const Home = () => {
   }, [selected]);
 
   function capitalizeWord(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1, str.length);
+    return str?.charAt(0)?.toUpperCase() + str?.slice(1, str.length);
   }
 
   return (
@@ -87,11 +87,95 @@ const Home = () => {
                 Create Group <i class="ri-add-line"></i>
               </button>
 
-              <GroupModal openModal={openModal} setOpenModal={setOpenModal} />
+              <GroupModal
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                text="Create"
+              />
             </div>
             {chatLists?.map((d, i) => (
               <>
-                {d?.users?.map((v) => (
+                {d.isGroupChat ? (
+                  <>
+                    <Badge
+                      color="success"
+                      className={`mb-4 max-md:w-[50vw] cursor-pointer ${
+                        selected?._id === d?._id
+                          ? "bg-green-400 text-white"
+                          : ""
+                      }`}
+                      key={d?._id}
+                      onClick={() => {
+                        dispatch(
+                          setSelected({
+                            chatName: d.chatName,
+                            _id: d._id,
+                          })
+                        );
+                        // Putting all the users who have joined in group
+                        dispatch(groupUsers(d.users));
+                      }}
+                    >
+                      <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                        <span className="font-bold">{i + 1}</span>
+                        <span className=" max-md:mr-8">
+                          <Avatar
+                            img="https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg"
+                            alt=""
+                            rounded
+                          />
+                        </span>
+                        <span className="max-md:text-lg text-lg flex flex-col">
+                          <span className="text-sm">Group</span>
+                          {d?.chatName}
+                        </span>
+                      </div>
+                    </Badge>
+                  </>
+                ) : (
+                  <>
+                    {d?.users?.map((v) => (
+                      <>
+                        {userInfo?.details?._id !== v._id && (
+                          <Badge
+                            color="success"
+                            className={`mb-4 max-md:w-[50vw] cursor-pointer ${
+                              selected?._id === v?._id
+                                ? "bg-green-400 text-white"
+                                : ""
+                            }`}
+                            key={d?._id}
+                            onClick={() => {
+                              dispatch(setSelected(v));
+                            }}
+                          >
+                            <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                              <span className="font-bold">{i + 1}</span>
+                              <span className=" max-md:mr-8">
+                                <Avatar
+                                  img={`${
+                                    d?.isGroupChat
+                                      ? `https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg`
+                                      : `${URL}${v?.pic}`
+                                  }`}
+                                  alt=""
+                                  rounded
+                                />
+                              </span>
+                              <span className="max-md:text-lg text-lg flex flex-col">
+                                <span className="text-sm">
+                                  {d?.isGroupChat && "Group"}
+                                </span>
+                                {d?.isGroupChat ? d?.chatName : v.name}
+                              </span>
+                            </div>
+                          </Badge>
+                        )}
+                      </>
+                    ))}
+                  </>
+                )}
+                {/* {d?.users?.map((v) => (
                   <>
                     {userInfo?.details?._id !== v._id && (
                       <Badge
@@ -105,7 +189,10 @@ const Home = () => {
                         onClick={() => {
                           if (d.isGroupChat) {
                             dispatch(
-                              setSelected({ chatName: d.chatName, _id: d._id })
+                              setSelected({
+                                chatName: d.chatName,
+                                _id: d._id,
+                              })
                             );
                             dispatch(groupUsers(d.users));
                           } else {
@@ -116,19 +203,27 @@ const Home = () => {
                         <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
                           <span className="font-bold">{i + 1}</span>
                           <span className=" max-md:mr-8">
-                            <Avatar img={`${URL}${v?.pic}`} alt="" rounded />
+                            <Avatar
+                              img={`${
+                                d?.isGroupChat
+                                  ? `https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg`
+                                  : `${URL}${v?.pic}`
+                              }`}
+                              alt=""
+                              rounded
+                            />
                           </span>
                           <span className="max-md:text-lg text-lg flex flex-col">
                             <span className="text-sm">
                               {d?.isGroupChat && "Group"}
                             </span>
-                            {d?.isGroupChat ? d.chatName : v.name}
+                            {d?.isGroupChat ? d?.chatName : v.name}
                           </span>
                         </div>
                       </Badge>
                     )}
                   </>
-                ))}
+                ))} */}
               </>
             ))}
           </div>
@@ -145,12 +240,14 @@ const Home = () => {
             }}
           >
             <p className="font-bold">
-              {selected
+              {selected && selected?.chatName
                 ? capitalizeWord(
                     selected.chatName
                       ? `${selected?.chatName} (Group)`
                       : selected?.name
                   )
+                : selected
+                ? `${selected.name}`
                 : "Not selected any chat"}
             </p>
           </div>
@@ -163,4 +260,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default memo(Home);

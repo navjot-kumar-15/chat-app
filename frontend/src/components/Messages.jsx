@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 
 const Messages = () => {
   return (
@@ -150,4 +150,4 @@ const Messages = () => {
   );
 };
 
-export default Messages;
+export default memo(Messages);

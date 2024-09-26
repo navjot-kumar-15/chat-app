@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   searchUser,
@@ -70,4 +70,4 @@ const SearchUser = ({ handleClose }) => {
     </>
   );
 };
-export default SearchUser;
+export default memo(SearchUser);

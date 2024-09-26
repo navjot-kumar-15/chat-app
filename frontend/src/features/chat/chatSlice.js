@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
@@ -8,6 +9,7 @@ const initialState = {
   query: "",
   isLoading: false,
   isError: false,
+  isSuccess: false,
   otherUserId: "",
   selected: null,
   groupUsers: [],
@@ -66,6 +68,27 @@ export const getUserChats = createAsyncThunk("/chat/getUserChats", async () => {
     console.log(error.message);
   }
 });
+
+// Create group chat
+export const createGroupChat = createAsyncThunk(
+  "/chat/createGroupChat",
+  async (value) => {
+    try {
+      const config = configToken();
+      const { data } = await axios.post(
+        `${URL}/api/chat/groupChat`,
+        value,
+        config
+      );
+      if (data.success == 1) {
+        toast.success("Group Created successfully");
+      }
+      return data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 export const chatSlice = createSlice({
   name: "chat",
@@ -126,6 +149,19 @@ export const chatSlice = createSlice({
       state.isError = true;
     });
     // Get user chat end
+
+    // Create Group Chat start
+    builder.addCase(createGroupChat.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(createGroupChat.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+    });
+    builder.addCase(createGroupChat.rejected, (state, action) => {
+      state.isError = true;
+    });
+    // Create Group Chat end
   },
 });
 
