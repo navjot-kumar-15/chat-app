@@ -134,6 +134,31 @@ export const removeUserFromGroup = createAsyncThunk(
   }
 );
 
+// Add user
+export const addUserInGroup = createAsyncThunk(
+  "/chat/addUserInGroup",
+  async (value) => {
+    try {
+      const config = configToken();
+      const { data } = await axios.post(
+        `${URL}/api/chat/addUser`,
+        value,
+        config
+      );
+      if (data.success == 1) {
+        toast.success("User added successfully");
+        return data;
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+);
+
+// Send Message
+
 export const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -237,6 +262,20 @@ export const chatSlice = createSlice({
       state.isError = true;
     });
     // Remove  Group Chat end
+
+    // Add User in Group Chat start
+    builder.addCase(addUserInGroup.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(addUserInGroup.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.selected = action.payload.details;
+    });
+    builder.addCase(addUserInGroup.rejected, (state, action) => {
+      state.isError = true;
+    });
+    // Add User in Group Chat end
   },
 });
 

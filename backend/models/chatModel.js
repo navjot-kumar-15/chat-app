@@ -8,6 +8,7 @@ const chatModel = mongoose.Schema(
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
+      default: null,
     },
     groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },

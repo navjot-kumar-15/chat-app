@@ -14,7 +14,8 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
   const [openModal, setOpenModal] = useState(false);
   const [pView, setPView] = useState(false);
   const dispatch = useDispatch();
-  const { query } = useSelector((state) => state.chat);
+  const { query, selected } = useSelector((state) => state.chat);
+  const { userInfo } = useSelector((state) => state.auth);
   // console.log(query);
   return (
     <div className="flex items-center h-[8vh] p-3 pr-[2rem]">
@@ -29,13 +30,18 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
               label={
                 <Avatar
                   alt="User settings"
-                  img="https://plus.unsplash.com/premium_photo-1666900440561-94dcb6865554?q=80&w=2127&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  // img={`${userInfo?.details?.pic?startsWith("http")` ` ? `${userInfo?.details?.pic}` : `${URL}${userInfo?.details?.pic}`}
+                  img={`${
+                    userInfo?.details?.pic?.startsWith("http")
+                      ? `${userInfo?.details?.pic}`
+                      : `${URL}${userInfo?.details?.pic}`
+                  }`}
                   rounded
                 />
               }
               arrowIcon={false}
               inline
-              className="max-md:w-auto w-[8vw] z-50"
+              className="max-md:w-auto w-[10vw] min-w-[8vw] max-w-[15vw] z-50"
             >
               <Dropdown.Item onClick={() => setPView(true)}>
                 <span>Profile</span>

@@ -166,20 +166,21 @@ export const renameGroup = async (req, res) => {
 export const addToGroup = async (req, res) => {
   try {
     const { chatId, userId } = req.body;
-    if ((!chatId, userId)) {
+    if (!chatId || !userId) {
       return res.send({
         success: 0,
         message: "Please enter all the required fields",
       });
     }
 
+    // TODO:I  have to first check if that user is exist or not
     const addUser = await Chat.findByIdAndUpdate(
       chatId,
       {
         $push: { users: userId },
       },
       { new: true }
-    );
+    ).populate("users");
 
     return res.send({
       success: 1,
@@ -189,7 +190,7 @@ export const addToGroup = async (req, res) => {
   } catch (error) {
     return res.send({
       success: 0,
-      messag: error.message,
+      message: error.message,
     });
   }
 };

@@ -29,15 +29,15 @@ const Messages = () => {
   }, []);
   return (
     <>
-      <div className="flex h-[88vh] antialiased text-gray-800">
+      <div className="flex h-[100%] w-[100%] antialiased text-gray-800">
         {selected && (
-          <div className="flex flex-row h-auto w-full overflow-x-hidden">
+          <div className="flex flex-row h-[90vh] overflow-x-hidden pt-5">
             <div className="flex flex-col flex-auto h-full">
               <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
                 <div className="flex flex-col h-full overflow-auto mb-4">
                   <div className="flex flex-col h-full">
                     <div className="grid grid-cols-12 gap-y-2">
-                      <div className="col-start-1 col-end-8 p-3 rounded-lg">
+                      <div className="col-start-1 col-end-8 p-3 max-md:p-0 max-sm:p-0 rounded-lg">
                         <div className="flex flex-row items-center">
                           <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
                             A

@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Kbd, Badge, Avatar } from "flowbite-react";
 import { FloatingLabel } from "flowbite-react";
 import {
+  addUserInGroup,
   getUserChats,
   removeUserFromGroup,
   renameGroupChat,
+  resetQuery,
   searchUser,
 } from "../features/chat/chatSlice";
 import { useForm } from "react-hook-form";
@@ -29,6 +31,7 @@ const Profile = ({ setProfileView, profileView, children }) => {
   const [editable, setEditable] = useState(false);
   const [label, setLabel] = useState("");
   const [userId, setUserId] = useState("");
+  const [lists, setLists] = useState([]);
 
   const filterSelected = selected?.users?.filter((v) => {
     if (selected?.groupAdmin._id == userId) {
@@ -55,6 +58,19 @@ const Profile = ({ setProfileView, profileView, children }) => {
       };
       dispatch(renameGroupChat(value));
       setLabel("");
+    }
+    if (lists.length > 1) {
+      return toast.error("For now you can add member one by one.");
+    }
+
+    if (lists.length > 0) {
+      const value = {
+        chatId: selected && selected.chatName && selected._id,
+        userId: lists[0]?._id,
+      };
+      dispatch(addUserInGroup(value));
+      dispatch(resetQuery());
+      setLists([]);
     }
   };
 
@@ -148,6 +164,30 @@ const Profile = ({ setProfileView, profileView, children }) => {
                       value={input}
                     />
 
+                    <div className="pl-3 flex gap-3 flex-wrap mb-4">
+                      {lists &&
+                        lists?.map((d) => (
+                          <Badge
+                            color="gray"
+                            className="flex flex-col w-[5vw] gap-3"
+                          >
+                            <div className="flex gap-3">
+                              <p className="text-start">{d?.name}</p>
+                              <p
+                                className="float-right cursor-pointer"
+                                onClick={() => {
+                                  setLists((prev) =>
+                                    prev.filter((c) => c._id !== d._id)
+                                  );
+                                }}
+                              >
+                                <i class="ri-close-line"></i>
+                              </p>
+                            </div>
+                          </Badge>
+                        ))}
+                    </div>
+
                     <div className="search-result">
                       {isLoading ? (
                         <div role="status" className="max-w-sm animate-pulse">
@@ -163,16 +203,22 @@ const Profile = ({ setProfileView, profileView, children }) => {
                                 color="info"
                                 className="p-2 w-fit flex gap-3 overflow-hidden cursor-pointer"
                                 onClick={() => {
-                                  // dispatch(singleChat(q?._id));
-                                  // handleClose();
-                                  // dispatch(setSelected(q));
-                                  // setInput("");
+                                  if (lists.find((d) => d._id === q._id)) {
+                                    toast.warning("Already added");
+                                    return;
+                                  }
+                                  setLists((prev) => [...prev, q]);
+                                  dispatch(resetQuery());
                                 }}
                               >
                                 <div className="block flex justify-center items-center gap-[2rem]">
                                   <span>
                                     <Avatar
-                                      img={`${URL}${q?.pic}`}
+                                      img={`${
+                                        q?.pic?.startsWith("http")
+                                          ? `${q.pic}`
+                                          : `${URL}${q?.pic}`
+                                      }`}
                                       alt="avatar of Jese"
                                       rounded
                                     />
@@ -189,20 +235,39 @@ const Profile = ({ setProfileView, profileView, children }) => {
                   </form>
                 )}
                 <div className="flex justify-between mt-[2rem]">
-                  <Button
-                    onClick={() => {
-                      setEditable(!editable);
-                      handleUpdate();
-                    }}
-                  >
-                    {editable ? "Update" : "Edit"}
-                  </Button>
+                  {editable ? (
+                    <Button
+                      onClick={() => {
+                        setEditable(!editable);
+                        handleUpdate();
+                      }}
+                    >
+                      Update
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setEditable(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                  )}
                   {editable ? (
                     <Button color="failure" onClick={() => setEditable(false)}>
                       Cancel
                     </Button>
                   ) : (
-                    <Button color="failure">Leave</Button>
+                    <Button
+                      color="failure"
+                      onClick={() => {
+                        toast.warning(
+                          "Sorry For the inconvenience this functionality will be added soon!!"
+                        );
+                      }}
+                    >
+                      Leave
+                    </Button>
                   )}
                 </div>
               </>

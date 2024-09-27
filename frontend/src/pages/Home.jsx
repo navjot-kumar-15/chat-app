@@ -57,9 +57,9 @@ const Home = () => {
         handleClose={() => setIsOpen(false)}
       />
 
-      <div className="h-[95%] min-w-[100%] flex gap-2 relative">
+      <div className="h-full min-w-[100%] flex gap-2 relative">
         <div
-          className={`left h-auto  flex flex-col max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
+          className={`left h-[93vh]  flex flex-col   max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
             selected ? "max-lg:hidden" : "max-lg:block"
           } max-md:h-[100vh]`}
         >
@@ -241,7 +241,7 @@ const Home = () => {
           </div>
         </div>
         <div
-          className={`right flex flex-col w-[80%] max-lg:w-[100%] relative h-auto ${
+          className={`right flex flex-col w-[80%] max-lg:w-[100%] relative h-[94vh] ${
             selected ? "max-lg:block" : "max-lg:hidden"
           } `}
         >
@@ -289,7 +289,7 @@ const Home = () => {
               </>
             )}
           </div>
-          <div className="min-h-[94%] pt-[2rem] bg-gray-100">
+          <div className="min-h-[93vh] pt-[2rem] bg-gray-100">
             <Messages />
           </div>
         </div>
