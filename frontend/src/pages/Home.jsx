@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo, useMemo } from "react";
 import Header from "../components/Header";
-import { Button, Badge, Avatar } from "flowbite-react";
+import { Badge, Avatar } from "flowbite-react";
 import SideBar from "../components/SideBar";
 import SearchUser from "../components/SearchUser";
 import { useDispatch, useSelector } from "react-redux";
@@ -59,7 +59,7 @@ const Home = () => {
 
       <div className="h-full min-w-[100%] flex gap-2 relative">
         <div
-          className={`left h-[93vh]  flex flex-col   max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-scroll bg-gray-200 max-md:w-[100%] ${
+          className={`left h-[93vh]  flex flex-col   max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-y-scroll  scrollbar-hidden bg-gray-200 max-md:w-[100%] ${
             selected ? "max-lg:hidden" : "max-lg:block"
           } max-md:h-[100vh]`}
         >
@@ -155,7 +155,7 @@ const Home = () => {
                             }`}
                             key={d?._id}
                             onClick={() => {
-                              dispatch(setSelected(v));
+                              dispatch(setSelected({ ...v, chat: d }));
                             }}
                           >
                             <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">

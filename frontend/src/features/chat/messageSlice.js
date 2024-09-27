@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const URL = import.meta.e;
+const URL = import.meta.env.VITE_REACT_URL;
 
 function configToken() {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -50,14 +50,10 @@ export const getAllMessages = createAsyncThunk(
   async (value) => {
     try {
       const config = configToken();
-      const { data } = await axios.post(
-        `${URL}/api/message/send/${id}`,
-        config
-      );
+      const { data } = await axios.get(`${URL}/api/message/${value}`, config);
+
       if (data.success == 1) {
         return data;
-      } else {
-        toast.error(data.message);
       }
     } catch (error) {
       console.log(error.message);
@@ -76,25 +72,31 @@ export const MessageSlice = createSlice({
     });
     builder.addCase(sendMessage.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.messages.push(action.payload.details);
+      if (action.payload) {
+        state.messages.push(action.payload.details);
+      }
     });
-    builder.addCase(sendMessage.pending, (state, action) => {
+    builder.addCase(sendMessage.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
     });
     // Send Message end
-
     // Get All Message start
     builder.addCase(getAllMessages.pending, (state, action) => {
       state.isLoading = true;
     });
     builder.addCase(getAllMessages.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.messages = action.payload.details;
+      if (action.payload) {
+        state.messages = action.payload.details;
+      } else {
+        state.messages = [];
+      }
     });
-    builder.addCase(getAllMessages.pending, (state, action) => {
+    builder.addCase(getAllMessages.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
+      state.message = [];
     });
     // Get All Message end
   },

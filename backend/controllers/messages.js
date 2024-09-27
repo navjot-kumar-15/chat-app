@@ -19,25 +19,22 @@ export const sendMessage = async (req, res) => {
       content,
     };
 
-    const newMessage = await Message.create(message);
-
+    let newMessage = await Message.create(message);
+    newMessage = await Message.findById(newMessage._id).populate(
+      "sender",
+      "name pic email"
+    );
     const latestMessage = await Chat.findByIdAndUpdate(
       chatId,
       {
         latestMessage: newMessage._id,
       },
       { new: true }
-    ).populate({
-      path: "latestMessage",
-      populate: {
-        path: "sender",
-        select: "name pic email",
-      },
-    });
+    );
     return res.send({
       success: 1,
       message: "Message created successfully",
-      details: latestMessage,
+      details: newMessage,
     });
   } catch (error) {
     return res.send({
@@ -59,15 +56,10 @@ export const allSingleChat = async (req, res) => {
       });
     }
 
-    const findAllMessage = await Message.find({ chat: chatId })
-      .populate("sender", "name pic email")
-      .populate({
-        path: "chat",
-        populate: {
-          path: "users",
-          select: "name email pic",
-        },
-      });
+    const findAllMessage = await Message.find({ chat: chatId }).populate(
+      "sender",
+      "name pic email"
+    );
 
     if (!findAllMessage.length) {
       return res.send({

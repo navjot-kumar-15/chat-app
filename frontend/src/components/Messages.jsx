@@ -1,13 +1,20 @@
-import React, { memo, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
+import { getAllMessages, sendMessage } from "../features/chat/messageSlice";
+import { toast } from "react-toastify";
+import { Avatar } from "flowbite-react";
+const URL = import.meta.env.VITE_REACT_URL;
 
 const Messages = () => {
-  const { selected } = useSelector((state) => state.chat);
   const [emoji, setEmoji] = useState(false);
   const emojiPickerRef = useRef(null);
   const [valueInput, setValueInput] = useState("");
-
+  const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.auth);
+  const { messages } = useSelector((state) => state.message);
+  const { selected } = useSelector((state) => state.chat);
+  const [messageLength, setMessageLength] = useState(messages.length);
   const handleEmojiClick = (d) => {
     setValueInput((prev) => prev + d.emoji);
   };
@@ -27,80 +34,100 @@ const Messages = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // console.log(selected);
+
+  useEffect(() => {
+    if (selected) {
+      dispatch(
+        getAllMessages(selected?.chat ? selected?.chat?._id : selected?._id)
+      );
+    }
+  }, [selected, messages.length]);
+
   return (
     <>
       <div className="flex h-[100%] w-[100%] antialiased text-gray-800">
         {selected && (
-          <div className="flex flex-row h-[90vh] overflow-x-hidden pt-5">
+          <div className="flex flex-row h-[90vh] overflow-x-hidden  pt-5">
             <div className="flex flex-col flex-auto h-full">
-              <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-                <div className="flex flex-col h-full overflow-auto mb-4">
+              <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full max-md:p-4">
+                <div className="flex flex-col h-full overflow-auto   scrollbar-hidden mb-4 w-[78vw] max-lg:w-[97vw] max-lg:ml-3  max-md:w-[94vw] max-md:-ml-0 ">
                   <div className="flex flex-col h-full">
                     <div className="grid grid-cols-12 gap-y-2">
-                      <div className="col-start-1 col-end-8 p-3 max-md:p-0 max-sm:p-0 rounded-lg">
-                        <div className="flex flex-row items-center">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                            A
-                          </div>
-                          <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                            <div>Hey How are you today?</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-start-1 col-end-8 p-3 rounded-lg">
-                        <div className="flex flex-row items-center">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                            A
-                          </div>
-                          <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                            <div>
-                              Lorem ipsum dolor sit amet, consectetur
-                              adipisicing elit. Vel ipsa commodi illum saepe
-                              numquam maxime asperiores voluptate sit, minima
-                              perspiciatis.
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
-                        <div className="flex items-center justify-start flex-row-reverse">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                            A
-                          </div>
-                          <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                            <div>I'm ok what about you?</div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-start-6 col-end-13 p-3 rounded-lg">
-                        <div className="flex items-center justify-start flex-row-reverse">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                            A
-                          </div>
-                          <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                            <div>
-                              Lorem ipsum dolor sit, amet consectetur
-                              adipisicing. ?
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="col-start-1 col-end-8 p-3 rounded-lg">
-                        <div className="flex flex-row items-center">
-                          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                            A
-                          </div>
-                          <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                            <div>Lorem ipsum dolor sit amet !</div>
-                          </div>
-                        </div>
-                      </div>
+                      {messages &&
+                        messages?.map((v) => (
+                          <>
+                            {v.sender?._id !== userInfo?.details?._id ? (
+                              <div className="col-start-1 col-end-8 p-3 max-md:p-0 max-sm:p-0 rounded-lg">
+                                <div className="left flex flex-row items-center">
+                                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                                    <Avatar
+                                      img={`${
+                                        v?.sender?.pic?.startsWith("http")
+                                          ? `${v?.sender?.pic}`
+                                          : `${URL}${v?.sender?.pic}`
+                                      }`}
+                                      alt="avatar of Jese"
+                                      rounded
+                                    />
+                                  </div>
+                                  <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
+                                    <div>{v?.content}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="right col-start-6 col-end-13 p-3 rounded-lg">
+                                <div className="flex items-center justify-start flex-row-reverse">
+                                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
+                                    <Avatar
+                                      img={`${
+                                        v?.sender?.pic?.startsWith("http")
+                                          ? `${v?.sender?.pic}`
+                                          : `${URL}${v?.sender?.pic}`
+                                      }`}
+                                      alt="avatar of Jese"
+                                      rounded
+                                    />
+                                  </div>
+                                  <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
+                                    <div>{v?.content}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </>
+                        ))}
                     </div>
                   </div>
                 </div>
 
                 {/* Input box  */}
-                <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
+                <form
+                  className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (!selected || !valueInput) {
+                      toast.warning("Please enter something to send message");
+                      return;
+                    }
+                    const value = {
+                      chatId: selected?.chat
+                        ? selected?.chat?._id
+                        : selected?._id,
+                      content: valueInput,
+                    };
+
+                    dispatch(sendMessage(value));
+                    // dispatch(
+                    //   getAllMessages(
+                    //     selected?.chat ? selected?.chat?._id : selected?._id
+                    //   )
+                    // );
+                    setValueInput("");
+                  }}
+                >
                   <div>
                     <button className="flex items-center justify-center text-gray-400 hover:text-gray-600">
                       <svg
@@ -130,7 +157,7 @@ const Messages = () => {
                         }}
                         value={valueInput}
                       />
-                      <button
+                      <span
                         onClick={() => setEmoji(!emoji)}
                         className="absolute flex items-center justify-center h-full w-12 right-0 top-0 text-gray-400 hover:text-gray-600"
                       >
@@ -156,11 +183,14 @@ const Messages = () => {
                             <EmojiPicker onEmojiClick={handleEmojiClick} />
                           </div>
                         )}
-                      </button>
+                      </span>
                     </div>
                   </div>
                   <div className="ml-4">
-                    <button className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0">
+                    <button
+                      type="submit"
+                      className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
+                    >
                       <span>Send</span>
                       <span className="ml-2">
                         <svg
@@ -180,7 +210,7 @@ const Messages = () => {
                       </span>
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>

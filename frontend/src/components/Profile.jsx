@@ -34,7 +34,7 @@ const Profile = ({ setProfileView, profileView, children }) => {
   const [lists, setLists] = useState([]);
 
   const filterSelected = selected?.users?.filter((v) => {
-    if (selected?.groupAdmin._id == userId) {
+    if (selected?.groupAdmin?._id == userId) {
       toast.error("You cannot remove admin");
     } else {
       return v._id !== userId;
@@ -53,7 +53,7 @@ const Profile = ({ setProfileView, profileView, children }) => {
   const handleUpdate = () => {
     if (label) {
       const value = {
-        chatId: selected && selected.chatName && selected._id,
+        chatId: selected && selected?.chatName && selected?._id,
         chatName: label,
       };
       dispatch(renameGroupChat(value));
@@ -123,12 +123,12 @@ const Profile = ({ setProfileView, profileView, children }) => {
                       <Kbd className="flex gap-4">
                         {d?._id === userInfo?.details?._id
                           ? `You  ${
-                              d?._id === selected?.groupAdmin._id
+                              d?._id === selected?.groupAdmin?._id
                                 ? ` [Admin]`
                                 : ""
                             }`
                           : `${d?.name} ${
-                              d?._id === selected?.groupAdmin._id
+                              d?._id === selected?.groupAdmin?._id
                                 ? ` [Admin]`
                                 : ""
                             } `}
