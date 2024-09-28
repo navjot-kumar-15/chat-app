@@ -41,7 +41,7 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
               }
               arrowIcon={false}
               inline
-              className="max-md:w-auto w-[10vw] min-w-[8vw] max-w-[15vw] z-50"
+              className="max-md:w-auto w-[10vw] max-sm:border max-sm:border-red-800 max-sm:w-[50vw] min-w-[8vw] max-w-[15vw] z-50"
             >
               <Dropdown.Item onClick={() => setPView(true)}>
                 <span>Profile</span>

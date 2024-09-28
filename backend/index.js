@@ -25,4 +25,41 @@ app.use("/api/message", messageRoutes);
 app.use(notFound);
 app.use(errorHandler);
 const PORT = process.env.PORT || 8084;
-app.listen(PORT, () => console.log(`Server is on PORT ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server is on PORT ${PORT}`));
+
+// Socket.IO setup
+import { Server } from "socket.io";
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (socket) => {
+  socket.on("setup", (userData) => {
+    socket.join(userData?._id);
+    console.log(userData);
+  });
+
+  socket.on("join-chat", (room) => {
+    socket.join(room);
+    console.log("User Joined the room ", room);
+  });
+
+  socket.on("new-message", (message) => {
+    console.log("Message", message);
+    let chat = message.chat;
+    if (!chat.users) return console.log("No user found");
+    chat.users.forEach((user) => {
+      if (user._id === message.sender._id) return;
+      socket.in(user._id).emit("message-recieved", message);
+    });
+  });
+
+  socket.off("setup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id);
+  });
+});

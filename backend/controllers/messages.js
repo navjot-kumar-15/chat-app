@@ -20,10 +20,9 @@ export const sendMessage = async (req, res) => {
     };
 
     let newMessage = await Message.create(message);
-    newMessage = await Message.findById(newMessage._id).populate(
-      "sender",
-      "name pic email"
-    );
+    newMessage = await Message.findById(newMessage._id)
+      .populate("sender", "name pic email")
+      .populate("chat");
     const latestMessage = await Chat.findByIdAndUpdate(
       chatId,
       {

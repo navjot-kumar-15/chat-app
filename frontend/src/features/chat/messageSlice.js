@@ -1,8 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { io } from "socket.io-client";
+import { socketConfig } from "../../config/utils";
 
 const URL = import.meta.env.VITE_REACT_URL;
+
+// let socketConfig = () => {
+//   let socket = io(socketURL);
+//   return socket;
+// };
 
 function configToken() {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -20,6 +27,7 @@ const initialState = {
   message: null,
   isLoading: false,
   isError: false,
+  socketStatus: false,
 };
 
 // Send Message
@@ -34,6 +42,9 @@ export const sendMessage = createAsyncThunk(
         config
       );
       if (data.success == 1) {
+        let socket = socketConfig();
+        socket.emit("new-message", data.details);
+
         return data;
       } else {
         toast.error(data.message);
@@ -53,6 +64,7 @@ export const getAllMessages = createAsyncThunk(
       const { data } = await axios.get(`${URL}/api/message/${value}`, config);
 
       if (data.success == 1) {
+        // console.log(data);
         return data;
       }
     } catch (error) {
@@ -64,45 +76,53 @@ export const getAllMessages = createAsyncThunk(
 export const MessageSlice = createSlice({
   name: "message",
   initialState,
-  reducers: {},
+  reducers: {
+    addMessage: (state, action) => {
+      state.messages = action.payload;
+      // console.log(action.payload);
+    },
+    setSocket: (state, action) => {
+      socket = action.payload; // Store the socket connection
+    },
+  },
   extraReducers: (builder) => {
     // Send Message start
     builder.addCase(sendMessage.pending, (state, action) => {
       state.isLoading = true;
+      state.socketStatus = true;
     });
     builder.addCase(sendMessage.fulfilled, (state, action) => {
       state.isLoading = false;
-      if (action.payload) {
-        state.messages.push(action.payload.details);
-      }
+      let socket = socketConfig();
+      socket.on("message-recieved", (newMessage) => {
+        state.messages = [...state.messages, newMessage];
+      });
+      state.socketStatus = false;
     });
     builder.addCase(sendMessage.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
     });
     // Send Message end
+
     // Get All Message start
     builder.addCase(getAllMessages.pending, (state, action) => {
       state.isLoading = true;
     });
     builder.addCase(getAllMessages.fulfilled, (state, action) => {
       state.isLoading = false;
-      if (action.payload) {
-        state.messages = action.payload.details;
-      } else {
-        state.messages = [];
-      }
+      state.messages = action?.payload ? action.payload?.details : [];
     });
     builder.addCase(getAllMessages.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = true;
-      state.message = [];
+      // state.message = [];
     });
     // Get All Message end
   },
 });
 
 // Action creators are generated for each case reducer function
-export const {} = MessageSlice.actions;
+export const { addMessage } = MessageSlice.actions;
 
 export default MessageSlice.reducer;
