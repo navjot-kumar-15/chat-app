@@ -18,6 +18,9 @@ app.use(express.static("./uploads"));
 // Database
 connectDB();
 
+app.get("/", (req, res) => {
+  res.send("Hello world");
+});
 // api routes
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
