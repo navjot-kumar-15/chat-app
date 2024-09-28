@@ -11,8 +11,7 @@ export function timeFormat(time) {
 
 export const socketConfig = () => {
   let socket = io(URL, {
-    withCredentials: true,
-    transports: ["websocket"],
+    transports: ["websocket", "polling"],
   });
   return socket;
 };

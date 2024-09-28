@@ -62,7 +62,7 @@ const Messages = () => {
   useEffect(() => {
     // Create a socket connection
     socket = io(URL, {
-      transports: ["websocket"],
+      transports: ["websocket", "polling"],
     });
 
     socket.on("connect", () => {
