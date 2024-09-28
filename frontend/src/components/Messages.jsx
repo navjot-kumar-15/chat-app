@@ -11,7 +11,6 @@ import { Avatar } from "flowbite-react";
 import { io } from "socket.io-client";
 const URL = import.meta.env.VITE_REACT_URL;
 
-const socketURL = "http://localhost:8080";
 var socket, selectChatComp;
 
 const Messages = () => {
@@ -62,7 +61,9 @@ const Messages = () => {
 
   useEffect(() => {
     // Create a socket connection
-    socket = io(socketURL);
+    socket = io(URL, {
+      transports: ["websocket"],
+    });
 
     socket.on("connect", () => {
       setSocketConn(true);

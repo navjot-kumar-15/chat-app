@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { io } from "socket.io-client";
 import { socketConfig } from "../../config/utils";
 
 const URL = import.meta.env.VITE_REACT_URL;

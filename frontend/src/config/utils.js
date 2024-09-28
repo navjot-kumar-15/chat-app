@@ -10,6 +10,9 @@ export function timeFormat(time) {
 }
 
 export const socketConfig = () => {
-  let socket = io(URL);
+  let socket = io(URL, {
+    withCredentials: true,
+    transports: ["websocket"],
+  });
   return socket;
 };
