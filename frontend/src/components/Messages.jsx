@@ -11,7 +11,7 @@ import { Avatar } from "flowbite-react";
 import { io } from "socket.io-client";
 const URL = import.meta.env.VITE_REACT_URL;
 
-var socket, selectChatComp;
+var socket;
 
 const Messages = () => {
   const [emoji, setEmoji] = useState(false);
@@ -61,9 +61,7 @@ const Messages = () => {
 
   useEffect(() => {
     // Create a socket connection
-    socket = io(URL, {
-      transports: ["websocket", "polling"],
-    });
+    socket = io(URL);
 
     socket.on("connect", () => {
       setSocketConn(true);

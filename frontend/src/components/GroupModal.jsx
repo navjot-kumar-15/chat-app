@@ -29,8 +29,9 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
   } = useForm();
   const [users, setUsers] = useState([]);
   const dispatch = useDispatch();
-  const { query, isSuccess, chatLists } = useSelector((state) => state.chat);
+  const { query } = useSelector((state) => state.chat);
   const [chat, setChat] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   useEffect(() => {
     dispatch(getUserChats());
@@ -110,15 +111,31 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                 </div>
                 <div className="w-[80%] relative">
                   <div className="flex gap-2 w-[100%] flex-col">
-                    <TextInput
-                      id="addUser"
-                      type="text"
-                      required
-                      placeholder="Enter name or email eg:John or john@gmail.com"
-                      onChange={(e) => {
-                        dispatch(searchUser(e.target.value));
-                      }}
-                    />
+                    <div className="flex gap-4">
+                      <TextInput
+                        id="addUser"
+                        type="text"
+                        className="w-[80%]"
+                        required
+                        placeholder="Enter name or email eg:John or john@gmail.com"
+                        onChange={(e) => {
+                          setSearchInput(e.target.value);
+                        }}
+                      />
+                      <Button
+                        color="dark"
+                        className="w-[20%]"
+                        onClick={() => {
+                          if (!searchInput.length > 0) {
+                            toast.error("Please enter something");
+                            return;
+                          }
+                          dispatch(searchUser(searchInput));
+                        }}
+                      >
+                        Search
+                      </Button>
+                    </div>
                     <div className="overflow-auto w-[100%] flex gap-2 flex-wrap mb-4  ">
                       {query &&
                         query?.details?.slice(0, 3)?.map((q, i) => (
@@ -135,6 +152,7 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                               // Todo : Duplicate entry passing
                               setUsers([...users, q]);
                               dispatch(resetQuery());
+                              setSearchInput("");
                             }}
                           >
                             <div className=" flex justify-center items-center gap-[.9rem]">

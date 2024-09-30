@@ -14,8 +14,8 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://chat-app-kappa-three-50.vercel.app",
-    methods: ["GET", "POST"],
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.use(express.static("./uploads"));
@@ -40,8 +40,8 @@ import { Server } from "socket.io";
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "https://chat-app-kappa-three-50.vercel.app",
-    methods: ["GET", "POST"],
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"],
   },
 });

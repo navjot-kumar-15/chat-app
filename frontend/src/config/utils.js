@@ -10,8 +10,9 @@ export function timeFormat(time) {
 }
 
 export const socketConfig = () => {
-  let socket = io(URL, {
-    transports: ["websocket", "polling"],
-  });
+  // let socket = io(URL, {
+  //   transports: ["websocket", "polling"],
+  // });
+  let socket = io(URL);
   return socket;
 };
