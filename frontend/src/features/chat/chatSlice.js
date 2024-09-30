@@ -1,8 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
-
-const URL = import.meta.env.VITE_REACT_URL;
+import { configToken, URL } from "../../config/utils";
 
 const initialState = {
   chatLists: [],
@@ -15,26 +14,11 @@ const initialState = {
   groupUsers: [],
 };
 
-function configToken() {
-  const token = JSON.parse(localStorage.getItem("token"));
-  const config = {
-    headers: {
-      token,
-    },
-  };
-  return config;
-}
-
 // Search user
 export const searchUser = createAsyncThunk(
   "/chat/searchUser",
   async (value) => {
     try {
-      // const config = {
-      //   headers: {
-      //     token,
-      //   },
-      // };
       const config = configToken();
       const { data } = await axios.get(
         `${URL}/api/user/search?q=${value}`,

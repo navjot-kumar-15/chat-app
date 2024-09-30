@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-const URL = import.meta.env.VITE_REACT_URL;
+export const URL = import.meta.env.VITE_REACT_URL;
 
 export function timeFormat(time) {
   let val = new Date(time).toLocaleString("hi-IN").split(",");
@@ -10,9 +10,16 @@ export function timeFormat(time) {
 }
 
 export const socketConfig = () => {
-  // let socket = io(URL, {
-  //   transports: ["websocket", "polling"],
-  // });
   let socket = io(URL);
   return socket;
 };
+
+export function configToken() {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const config = {
+    headers: {
+      token,
+    },
+  };
+  return config;
+}

@@ -7,8 +7,7 @@ import {
   singleChat,
 } from "../features/chat/chatSlice";
 import { Avatar, Badge, Button } from "flowbite-react";
-
-const URL = import.meta.env.VITE_REACT_URL;
+import { URL } from "../config/utils";
 
 const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
   const [input, setInput] = useState("");
@@ -19,11 +18,6 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
     setInput(value);
   };
 
-  // useEffect(() => {
-  //   if (input) {
-  //     dispatch(searchUser(input));
-  //   }
-  // }, [dispatch, input]);
   return (
     <>
       <div className="flex flex-col gap-4 justify-center w-[100%]">

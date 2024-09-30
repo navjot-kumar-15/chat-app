@@ -13,7 +13,7 @@ import {
 } from "../features/chat/chatSlice";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-const URL = import.meta.env.VITE_REACT_URL;
+import { URL } from "../config/utils";
 
 const Profile = ({ setProfileView, profileView, children }) => {
   const {

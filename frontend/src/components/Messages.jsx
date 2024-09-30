@@ -9,6 +9,7 @@ import {
 import { toast } from "react-toastify";
 import { Avatar } from "flowbite-react";
 import { io } from "socket.io-client";
+import { getUserChats } from "../features/chat/chatSlice";
 const URL = import.meta.env.VITE_REACT_URL;
 
 var socket;
@@ -41,8 +42,10 @@ const Messages = () => {
   };
 
   useEffect(() => {
-    setLists(messages);
-  }, [messages]);
+    if (selected) {
+      setLists(messages);
+    }
+  }, [selected, messages]);
 
   // Emoji container will close when click outside
   useEffect(() => {
@@ -90,6 +93,7 @@ const Messages = () => {
       socket.off("message-received", handleMessageReceived);
     };
   });
+
   const scrollToBottom = () => {
     if (messagesRef.current) {
       messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
@@ -102,10 +106,6 @@ const Messages = () => {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!selected || valueInput.length === 0) {
-      toast.warning("Please enter something to send a message");
-      return;
-    }
 
     const newMessage = {
       chatId: selected?.chat ? selected?.chat?._id : selected?._id,
@@ -114,6 +114,7 @@ const Messages = () => {
 
     // Dispatch sendMessage and also addMessage to state immediately
     dispatch(sendMessage(newMessage));
+    dispatch(getUserChats());
     setValueInput("");
   };
 
@@ -189,7 +190,10 @@ const Messages = () => {
                   onSubmit={handleSendMessage}
                 >
                   <div>
-                    <button className="flex items-center justify-center text-gray-400 hover:text-gray-600">
+                    <button
+                      onClick={() => {}}
+                      className="flex items-center justify-center text-gray-400 hover:text-gray-600"
+                    >
                       <svg
                         className="w-5 h-5"
                         fill="none"

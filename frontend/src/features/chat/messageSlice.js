@@ -1,24 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { socketConfig } from "../../config/utils";
-
-const URL = import.meta.env.VITE_REACT_URL;
-
-// let socketConfig = () => {
-//   let socket = io(socketURL);
-//   return socket;
-// };
-
-function configToken() {
-  const token = JSON.parse(localStorage.getItem("token"));
-  const config = {
-    headers: {
-      token,
-    },
-  };
-  return config;
-}
+import { configToken, socketConfig, URL } from "../../config/utils";
 
 const initialState = {
   value: 0,

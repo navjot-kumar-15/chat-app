@@ -7,22 +7,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserInfo } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Tooltip } from "flowbite-react";
+import Messages from "../components/Messages";
+import GroupModal from "../components/GroupModal";
+import Profile from "../components/Profile";
+import { URL } from "../config/utils";
 import {
   getUserChats,
   groupUsers,
   resetSetSelected,
   setSelected,
 } from "../features/chat/chatSlice";
-import Messages from "../components/Messages";
-import GroupModal from "../components/GroupModal";
-import Profile from "../components/Profile";
-
-const URL = import.meta.env.VITE_REACT_URL;
+import { getAllNotification } from "../features/chat/notification";
 
 const Home = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);
-  const { chatLists, selected, isSuccess } = useSelector((state) => state.chat);
+  const { chatLists, selected, isSuccess, messages } = useSelector(
+    (state) => state.chat
+  );
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
@@ -39,11 +41,12 @@ const Home = () => {
   // Fetch user info and chats on component mount
   useEffect(() => {
     dispatch(getUserInfo());
+    dispatch(getAllNotification());
   }, [token]);
 
   useEffect(() => {
     dispatch(getUserChats());
-  }, [selected, isSuccess]);
+  }, [selected, isSuccess, messages?.length]);
 
   function capitalizeWord(str) {
     return str?.charAt(0)?.toUpperCase() + str?.slice(1, str.length);
@@ -102,140 +105,102 @@ const Home = () => {
             </div>
             {chatLists?.map((d, i) => (
               <>
-                {d.isGroupChat ? (
-                  <>
-                    <Badge
-                      color="success"
-                      className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] cursor-pointer ${
-                        selected?._id === d?._id
-                          ? "bg-green-400 text-white"
-                          : ""
-                      }`}
-                      key={d?._id}
-                      onClick={() => {
-                        dispatch(
-                          setSelected({
-                            chatName: d.chatName,
-                            _id: d._id,
-                            users: d?.users,
-                            groupAdmin: d?.groupAdmin,
-                          })
-                        );
-                        // Putting all the users who have joined in group
-                        dispatch(groupUsers(d.users));
-                      }}
-                    >
-                      <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
-                        <span className="font-bold">{i + 1}</span>
-                        <span className=" max-md:mr-5">
-                          <Avatar
-                            img="https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg"
-                            alt=""
-                            rounded
-                          />
-                        </span>
-                        <span className="max-md:text-lg text-lg flex flex-col">
-                          <span className="text-sm">Group</span>
-                          {d?.chatName}
-                        </span>
-                      </div>
-                    </Badge>
-                  </>
-                ) : (
-                  <>
-                    {d?.users?.map((v) => (
-                      <>
-                        {userInfo?.details?._id !== v._id && (
-                          <Badge
-                            color="success"
-                            className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw]  cursor-pointer ${
-                              selected?._id === v?._id
-                                ? "bg-green-400 text-white"
-                                : ""
-                            }`}
-                            key={d?._id}
-                            onClick={() => {
-                              dispatch(setSelected({ ...v, chat: d }));
-                            }}
-                          >
-                            <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
-                              <span className="font-bold">{i + 1}</span>
-                              <span className=" max-md:mr-5">
-                                <Avatar
-                                  img={`${
-                                    d?.isGroupChat !== true &&
-                                    `${
-                                      v?.pic?.startsWith("http")
-                                        ? `${v?.pic}`
-                                        : `${URL}${v?.pic}`
-                                    }`
-                                  }`}
-                                  alt=""
-                                  rounded
-                                />
-                              </span>
-                              <span className="max-md:text-lg text-lg flex flex-col">
-                                <span className="text-sm">
-                                  {d?.isGroupChat && "Group"}
-                                </span>
-                                {d?.isGroupChat ? d?.chatName : v.name}
-                              </span>
-                            </div>
-                          </Badge>
-                        )}
-                      </>
-                    ))}
-                  </>
-                )}
-                {/* {d?.users?.map((v) => (
-                  <>
-                    {userInfo?.details?._id !== v._id && (
+                <div>
+                  {d.isGroupChat ? (
+                    <>
                       <Badge
                         color="success"
-                        className={`mb-4 max-md:w-[50vw] cursor-pointer ${
+                        className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] cursor-pointer ${
                           selected?._id === d?._id
                             ? "bg-green-400 text-white"
                             : ""
                         }`}
                         key={d?._id}
                         onClick={() => {
-                          if (d.isGroupChat) {
-                            dispatch(
-                              setSelected({
-                                chatName: d.chatName,
-                                _id: d._id,
-                              })
-                            );
-                            dispatch(groupUsers(d.users));
-                          } else {
-                            dispatch(setSelected(v));
-                          }
+                          dispatch(
+                            setSelected({
+                              chatName: d.chatName,
+                              _id: d._id,
+                              users: d?.users,
+                              groupAdmin: d?.groupAdmin,
+                            })
+                          );
+                          // Putting all the users who have joined in group
+                          dispatch(groupUsers(d.users));
                         }}
                       >
-                        <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
-                          <span className="font-bold">{i + 1}</span>
-                          <span className=" max-md:mr-8">
+                        <div className="flex  items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                          {/* <div className="w-full"> */}
+                          {/* <span className="font-bold">{i + 1}</span> */}
+                          <span className=" max-md:mr-5 ">
                             <Avatar
-                              img={`${
-                                d?.isGroupChat
-                                  ? `https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg`
-                                  : `${URL}${v?.pic}`
-                              }`}
+                              img="https://success-counseling.com/wp-content/themes/twentytwentyone-child/assets/images/team-dummy.jpg"
                               alt=""
                               rounded
+                              className=""
                             />
                           </span>
-                          <span className="max-md:text-lg text-lg flex flex-col">
-                            <span className="text-sm">
-                              {d?.isGroupChat && "Group"}
-                            </span>
-                            {d?.isGroupChat ? d?.chatName : v.name}
+                          <span className=" max-md:text-lg text-lg flex flex-col">
+                            <span className="text-sm">Group</span>
+                            {d?.chatName}
+                            <div className=" text-[1rem] font-extrabold">
+                              {d?.latestMessage?.content}
+                            </div>
                           </span>
+                          {/* </div/> */}
                         </div>
                       </Badge>
-                    )}
-                  </>
-                ))} */}
+                    </>
+                  ) : (
+                    <>
+                      {d?.users?.map((v) => (
+                        <>
+                          {userInfo?.details?._id !== v._id && (
+                            <Badge
+                              color="success"
+                              className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw]  cursor-pointer ${
+                                selected?._id === v?._id
+                                  ? "bg-green-400 text-white"
+                                  : ""
+                              }`}
+                              key={d?._id}
+                              onClick={() => {
+                                dispatch(setSelected({ ...v, chat: d }));
+                              }}
+                            >
+                              <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                                {/* <span className="font-bold">{i + 1}</span> */}
+                                <span className=" max-md:mr-5">
+                                  <Avatar
+                                    img={`${
+                                      d?.isGroupChat !== true &&
+                                      `${
+                                        v?.pic?.startsWith("http")
+                                          ? `${v?.pic}`
+                                          : `${URL}${v?.pic}`
+                                      }`
+                                    }`}
+                                    alt=""
+                                    rounded
+                                  />
+                                </span>
+                                <span className="max-md:text-lg text-lg flex flex-col">
+                                  <span className="text-sm">
+                                    {d?.isGroupChat && "Group"}
+                                  </span>
+                                  {d?.isGroupChat ? d?.chatName : v.name}
+                                  <div className=" text-[1rem] font-extrabold">
+                                    {d?.latestMessage?.content}
+                                  </div>
+                                </span>
+                              </div>
+                            </Badge>
+                          )}
+                        </>
+                      ))}
+                    </>
+                  )}
+                </div>
               </>
             ))}
           </div>

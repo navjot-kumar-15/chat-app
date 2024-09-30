@@ -6,6 +6,7 @@ config();
 import userRoutes from "./routes/user.js";
 import chatRoutes from "./routes/chat.js";
 import messageRoutes from "./routes/messages.js";
+import notificationRoutes from "./routes/notification.js";
 import { errorHandler, notFound } from "./middleware/errorMIddleware.js";
 
 const app = express();
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/notification", notificationRoutes);
 app.use(notFound);
 app.use(errorHandler);
 const PORT = process.env.PORT || 8084;

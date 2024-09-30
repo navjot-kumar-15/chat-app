@@ -17,8 +17,7 @@ import {
 } from "../features/chat/chatSlice";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
-
-const URL = import.meta.env.VITE_REACT_URL;
+import { URL } from "../config/utils";
 
 const GroupModal = ({ openModal, setOpenModal, text }) => {
   const {
