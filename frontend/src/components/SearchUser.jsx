@@ -1,11 +1,12 @@
 import React, { useState, memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  resetQuery,
   searchUser,
   setSelected,
   singleChat,
 } from "../features/chat/chatSlice";
-import { Avatar, Badge } from "flowbite-react";
+import { Avatar, Badge, Button } from "flowbite-react";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
@@ -18,11 +19,11 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
     setInput(value);
   };
 
-  useEffect(() => {
-    if (input) {
-      dispatch(searchUser(input));
-    }
-  }, [dispatch, input]);
+  // useEffect(() => {
+  //   if (input) {
+  //     dispatch(searchUser(input));
+  //   }
+  // }, [dispatch, input]);
   return (
     <>
       <div className="flex flex-col gap-4 justify-center w-[100%]">
@@ -34,6 +35,14 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
             value={input}
             onChange={handleChange}
           />
+          <Button
+            color="dark"
+            onClick={() => {
+              dispatch(searchUser(input));
+            }}
+          >
+            Go
+          </Button>
         </form>
         <div className="search-result">
           {isLoading ? (
@@ -52,10 +61,10 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
                 className="p-2 w-[100%] overflow-hidden cursor-pointer"
                 onClick={() => {
                   dispatch(singleChat(q?._id));
-                  // handleClose();
                   setIsOpen(false);
                   dispatch(setSelected(q));
-                  // setInput("");
+                  setInput("");
+                  dispatch(resetQuery());
                 }}
               >
                 <div className="block flex justify-center items-center gap-[2rem]">
