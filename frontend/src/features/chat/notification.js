@@ -14,9 +14,7 @@ export const getAllNotification = createAsyncThunk(
   async () => {
     const config = configToken();
     const { data } = await axios.get(`${URL}/api/notification`, config);
-    console.log(data);
     if (data.success == 1) {
-      console.log(data);
       return data;
     }
   }
@@ -26,7 +24,8 @@ export const readNotification = createAsyncThunk(
   "/notification/readNotification",
   async () => {
     const config = configToken();
-    const { data } = await axios.post(`${URL}/api/notification/read`, config);
+    const { data } = await axios.get(`${URL}/api/notification/read`, config);
+    console.log(data);
     if (data.success == 1) {
       return data;
     }

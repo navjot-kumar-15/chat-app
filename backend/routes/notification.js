@@ -8,6 +8,6 @@ import { protectAuth } from "../middleware/auth.js";
 const router = Router();
 
 router.get("/", protectAuth, allUsersNotifications);
-router.post("/read", protectAuth, notificationReadd);
+router.get("/read", protectAuth, notificationReadd);
 
 export default router;

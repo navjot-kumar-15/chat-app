@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { Avatar } from "flowbite-react";
 import { io } from "socket.io-client";
 import { getUserChats } from "../features/chat/chatSlice";
+import { getAllNotification } from "../features/chat/notification";
 const URL = import.meta.env.VITE_REACT_URL;
 
 var socket;
@@ -115,6 +116,7 @@ const Messages = () => {
     // Dispatch sendMessage and also addMessage to state immediately
     dispatch(sendMessage(newMessage));
     dispatch(getUserChats());
+    dispatch(getAllNotification());
     setValueInput("");
   };
 

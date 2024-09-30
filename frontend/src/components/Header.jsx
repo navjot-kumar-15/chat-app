@@ -4,9 +4,12 @@ import SideBar from "./SideBar";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { handleLogout } from "../features/auth/authSlice";
-import { searchUser } from "../features/chat/chatSlice";
 import SearchUser from "./SearchUser";
 import UserVIew from "./UserVIew";
+import {
+  getAllNotification,
+  readNotification,
+} from "../features/chat/notification";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
@@ -16,13 +19,23 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
   const dispatch = useDispatch();
   const { query, selected } = useSelector((state) => state.chat);
   const { userInfo } = useSelector((state) => state.auth);
-  // console.log(query);
+  const { count } = useSelector((state) => state.notification);
+
   return (
     <div className="flex items-center h-[8vh] p-3 pr-[2rem]">
       <div className="logo flex-1 font-extrabold text-3xl italic">Chatty</div>
       <div className="user flex gap-4 items-center max-md:ml-4">
-        <div className="">
-          <i className="ri-notification-line text-2xl mr-3 text-gray-500"></i>
+        <div className="relative">
+          <i
+            className="ri-notification-line text-2xl mr-3 text-gray-500"
+            onClick={async () => {
+              await dispatch(readNotification());
+              await dispatch(getAllNotification());
+            }}
+          ></i>
+          <span className="absolute left-6 text-red-500 font-extrabold ">
+            {count !== 0 ? count : ""}
+          </span>
         </div>
         <div>
           <div className="z-50">
