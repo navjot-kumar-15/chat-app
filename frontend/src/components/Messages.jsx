@@ -1,4 +1,11 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 import {
@@ -10,7 +17,10 @@ import { toast } from "react-toastify";
 import { Avatar } from "flowbite-react";
 import { io } from "socket.io-client";
 import { getUserChats } from "../features/chat/chatSlice";
-import { getAllNotification } from "../features/chat/notification";
+import {
+  getAllNotification,
+  newNotification,
+} from "../features/chat/notification";
 const URL = import.meta.env.VITE_REACT_URL;
 
 var socket;
@@ -86,24 +96,16 @@ const Messages = () => {
       ) {
         setLists((prev) => [...prev, newMessage]);
       } else {
-        // Handle notification for new messages in other chats
-        console.log("Message received for a different chat:", newMessage);
+        // dispatch(newNotification(newMessage));
+        if (!newMessage.includes(newMessage)) {
+          dispatch(newNotification([newMessage, ...newMessage]));
+        }
       }
     };
     return () => {
       socket.off("message-received", handleMessageReceived);
     };
   });
-
-  const scrollToBottom = () => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight;
-    }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [lists]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -221,6 +223,7 @@ const Messages = () => {
                         onChange={(e) => {
                           setValueInput(e.target.value);
                         }}
+                        autoFocus
                         value={valueInput}
                       />
                       <span

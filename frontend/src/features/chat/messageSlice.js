@@ -78,6 +78,8 @@ export const MessageSlice = createSlice({
       let socket = socketConfig();
       socket.on("message-recieved", (newMessage) => {
         state.messages = [...state.messages, newMessage];
+        console.log(newMessage);
+        state.message = [...newMessage];
       });
       state.socketStatus = false;
     });

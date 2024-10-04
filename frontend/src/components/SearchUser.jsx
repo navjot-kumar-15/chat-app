@@ -25,16 +25,11 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
           <input
             type="text"
             placeholder="Search here..."
-            className="border-b-4"
+            className="border-b-[.5px] outline-none ]"
             value={input}
             onChange={handleChange}
           />
-          <Button
-            color="dark"
-            onClick={() => {
-              dispatch(searchUser(input));
-            }}
-          >
+          <Button color="dark" onClick={() => dispatch(searchUser(input))}>
             Go
           </Button>
         </form>
@@ -52,7 +47,7 @@ const SearchUser = ({ handleClose, isOpen, setIsOpen }) => {
             query?.details?.map((q, i) => (
               <Badge
                 color="info"
-                className="p-2 w-[100%] overflow-hidden cursor-pointer"
+                className="p-2 w-[100%] overflow-hidden cursor-pointer "
                 onClick={() => {
                   dispatch(singleChat(q?._id));
                   setIsOpen(false);

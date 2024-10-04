@@ -35,7 +35,11 @@ export const readNotification = createAsyncThunk(
 export const notificationSlice = createSlice({
   name: "notification",
   initialState,
-  reducers: {},
+  reducers: {
+    newNotification: (state, action) => {
+      state.notifications = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     // Get all Notification start
     builder.addCase(getAllNotification.pending, (state, action) => {
@@ -44,6 +48,7 @@ export const notificationSlice = createSlice({
     builder.addCase(getAllNotification.fulfilled, (state, action) => {
       state.isLoading = false;
       state.count = action.payload.count;
+      state.notifications = action.payload;
     });
     builder.addCase(getAllNotification.rejected, (state, action) => {
       state.isError = true;
@@ -64,6 +69,6 @@ export const notificationSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const {} = notificationSlice.actions;
+export const { newNotification } = notificationSlice.actions;
 
 export default notificationSlice.reducer;

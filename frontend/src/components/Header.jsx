@@ -10,6 +10,7 @@ import {
   getAllNotification,
   readNotification,
 } from "../features/chat/notification";
+import { defaultImage, socketConfig } from "../config/utils";
 
 const URL = import.meta.env.VITE_REACT_URL;
 
@@ -18,8 +19,14 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
   const [pView, setPView] = useState(false);
   const dispatch = useDispatch();
   const { query, selected } = useSelector((state) => state.chat);
-  const { userInfo } = useSelector((state) => state.auth);
-  const { count } = useSelector((state) => state.notification);
+  const { userInfo, isLoading } = useSelector((state) => state.auth);
+  const { count, notifications } = useSelector((state) => state.notification);
+
+  // useEffect(() => {
+  //   dispatch(getAllNotification());
+  //   let socket = socketConfig();
+  //   socket.emit("notification", notifications);
+  // });
 
   return (
     <div className="flex items-center h-[8vh] p-3 pr-[2rem]">
@@ -45,9 +52,13 @@ const Header = ({ isOpen, setIsOpen, handleClose }) => {
                   alt="User settings"
                   // img={`${userInfo?.details?.pic?startsWith("http")` ` ? `${userInfo?.details?.pic}` : `${URL}${userInfo?.details?.pic}`}
                   img={`${
-                    userInfo?.details?.pic?.startsWith("http")
-                      ? `${userInfo?.details?.pic}`
-                      : `${URL}${userInfo?.details?.pic}`
+                    isLoading
+                      ? `${defaultImage}`
+                      : `${
+                          userInfo?.details?.pic?.startsWith("http")
+                            ? `${userInfo?.details?.pic}`
+                            : `${URL}${userInfo?.details?.pic}`
+                        }`
                   }`}
                   rounded
                 />

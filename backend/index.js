@@ -68,6 +68,14 @@ io.on("connection", (socket) => {
       socket.in(user._id).emit("message-recieved", message);
     });
   });
+  socket.on("notification", (newMessage) => {
+    if (!newMessage?.chat?.users) return;
+
+    newMessage.chat.users.forEach((user) => {
+      if (user === newMessage.sender) return;
+      socket.in(user).emit("new-notification", newMessage);
+    });
+  });
 
   socket.off("setup", () => {
     console.log("USER DISCONNECTED");

@@ -136,7 +136,7 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                       </Button>
                     </div>
                     <div className="overflow-auto w-[100%] flex gap-2 flex-wrap mb-4  ">
-                      {query &&
+                      {query && query?.details?.length > 0 ? (
                         query?.details?.slice(0, 3)?.map((q, i) => (
                           <Badge
                             color="info"
@@ -171,7 +171,10 @@ const GroupModal = ({ openModal, setOpenModal, text }) => {
                               </span>
                             </div>
                           </Badge>
-                        ))}
+                        ))
+                      ) : (
+                        <span>No result found</span>
+                      )}
                     </div>
                   </div>
                   {text == "Create" ? (

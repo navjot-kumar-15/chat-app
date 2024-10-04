@@ -19,9 +19,7 @@ export const allUsersNotifications = async (req, res) => {
           ],
         }).populate("chat", "isGroupChat users chatName");
 
-        if (isNotification && isNotification.length > 0) {
-          return isNotification;
-        }
+        return isNotification ?? null;
       })
     );
     const filterResult = await finalResult

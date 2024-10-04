@@ -62,7 +62,7 @@ const Home = () => {
 
       <div className="h-full min-w-[100%] flex gap-2 relative">
         <div
-          className={`left h-[93vh]  flex flex-col   max-xl:w-[30%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-y-scroll  scrollbar-hidden bg-gray-200 max-md:w-[100%] ${
+          className={`left h-[93vh]  flex flex-col   max-xl:w-[40%] gap-3 w-[20%] max-lg:w-[100%] max-lg:h-[100vh] p-3 overflow-y-scroll  scrollbar-hidden bg-gray-200 max-md:w-[100%] ${
             selected ? "max-lg:hidden" : "max-lg:block"
           } max-md:h-[100vh]`}
         >
@@ -110,7 +110,7 @@ const Home = () => {
                     <>
                       <Badge
                         color="success"
-                        className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] cursor-pointer ${
+                        className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] max-xl:w-[25vw] cursor-pointer ${
                           selected?._id === d?._id
                             ? "bg-green-400 text-white"
                             : ""
@@ -129,7 +129,7 @@ const Home = () => {
                           dispatch(groupUsers(d.users));
                         }}
                       >
-                        <div className="flex  items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                        <div className="flex  items-center w-[15vw] max-lg:w-[22vw] max-xl:w-[25vw] max-md:w-[100%] p-2 gap-5">
                           {/* <div className="w-full"> */}
                           {/* <span className="font-bold">{i + 1}</span> */}
                           <span className=" max-md:mr-5 ">
@@ -158,7 +158,7 @@ const Home = () => {
                           {userInfo?.details?._id !== v._id && (
                             <Badge
                               color="success"
-                              className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw]  cursor-pointer ${
+                              className={`mb-4 max-md:w-[55vw] max-lg:w-[55vw] max-xl:w-[25vw] cursor-pointer ${
                                 selected?._id === v?._id
                                   ? "bg-green-400 text-white"
                                   : ""
@@ -168,7 +168,7 @@ const Home = () => {
                                 dispatch(setSelected({ ...v, chat: d }));
                               }}
                             >
-                              <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-md:w-[100%] p-2 gap-5">
+                              <div className="flex items-center w-[15vw] max-lg:w-[22vw] max-xl:w-[25vw] max-md:w-[100%] p-2 gap-5">
                                 {/* <span className="font-bold">{i + 1}</span> */}
                                 <span className=" max-md:mr-5">
                                   <Avatar
